@@ -1,0 +1,26 @@
+# Haxe hxcpp build outputs
+examples/*/bin
+**/bin/
+
+# Luau build directories and intermediates
+vendor/**/build/
+project/luau/build/
+project/luau/built_lib/
+
+# Compiler/linker artifacts
+*.obj
+*.o
+*.pdb
+*.exp
+*.ilk
+*.idb
+*.tlog
+*.lastbuildstate
+*.cache
+*.log
+
+# Dynamic libraries (not tracked)
+*.so
+*.dll
+*.dylib
+*.dSYM/

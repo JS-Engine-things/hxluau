@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+	<pragma once="true" />
+
+	<files id="haxe">
+		<compilerflag value="-I${haxelib:hxluau}/project/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/include" />
+		<file name="${haxelib:hxluau}/project/src/LuauImpl.cpp" />
+	</files>
+
+	<files id="__main__">
+		<compilerflag value="-I${haxelib:hxluau}/project/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/include" />
+	</files>
+
+	<files id="__externs__">
+		<compilerflag value="-I${haxelib:hxluau}/project/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/include" />
+	</files>
+
+	<target id="haxe">
+		<flag value="-fstack-protector" if="mingw" />
+
+		<section if="windows">
+			<lib name="${haxelib:hxluau}/project/luau/lib/Windows/x64/luau.lib" if="HXCPP_M64" unless="HXCPP_ARM64" />
+			<lib name="${haxelib:hxluau}/project/luau/lib/Windows/arm64/luau.lib" if="HXCPP_ARM64" />
+		</section>
+
+		<section if="macos">
+			<lib name="${haxelib:hxluau}/project/luau/lib/MacOS/x64/libluau.a" if="HXCPP_M64" unless="HXCPP_ARM64" />
+			<lib name="${haxelib:hxluau}/project/luau/lib/MacOS/arm64/libluau.a" if="HXCPP_ARM64" />
+		</section>
+
+		<section if="linux">
+			<lib name="${haxelib:hxluau}/project/luau/lib/Linux/x64/libluau.a" if="HXCPP_M64" unless="HXCPP_ARM64" />
+			<lib name="${haxelib:hxluau}/project/luau/lib/Linux/arm64/libluau.a" if="HXCPP_ARM64" />
+			<lib name="${haxelib:hxluau}/project/luau/lib/Linux/armv7/libluau.a" if="HXCPP_ARMV7" />
+			<lib name="${haxelib:hxluau}/project/luau/lib/Linux/x86/libluau.a" unless="HXCPP_M64 || HXCPP_ARM64 || HXCPP_ARMV7" />
+		</section>
+
+		<section if="android">
+			<lib name="${haxelib:hxluau}/project/luau/lib/Android/libluau-arm64.a" if="HXCPP_ARM64" />
+			<lib name="${haxelib:hxluau}/project/luau/lib/Android/libluau-armv7a.a" if="HXCPP_ARMV7" />
+			<lib name="${haxelib:hxluau}/project/luau/lib/Android/libluau-x86.a" if="HXCPP_X86" />
+			<lib name="${haxelib:hxluau}/project/luau/lib/Android/libluau-x86_64.a" if="HXCPP_X86_64" />
+		</section>
+
+		<section if="iphoneos" unless="simulator">
+			<lib name="${haxelib:hxluau}/project/luau/lib/iOS/libluau_device.a" if="HXCPP_ARM64" />
+		</section>
+
+		<section if="iphoneos simulator">
+			<lib name="${haxelib:hxluau}/project/luau/lib/iOS/libluau_sim.a" if="HXCPP_ARM64 || HXCPP_M64" />
+		</section>
+	</target>
+</xml>

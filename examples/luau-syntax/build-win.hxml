@@ -1,0 +1,22 @@
+# HXML file for building the Luau syntax example
+
+# Set the main class
+-main Main
+
+# Add the current directory to class path
+-cp .
+
+# Set the output directory
+-cpp bin
+
+# Add hxluau library
+-lib hxluau
+
+# Build for 64-bit MSVC toolchain
+-D HXCPP_M64
+
+# Copy script file to output directory
+-cmd copy script.lua bin\script.lua
+
+# Run the executable
+-cmd bin\Main.exe
