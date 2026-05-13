@@ -588,7 +588,7 @@ extern class Lua
 	 * @param argp The arguments for the format string.
 	 */
 	@:native('lua_pushvfstring')
-	static function pushvfstring(L:cpp.RawPointer<Lua_State>, s:cpp.ConstCharStar, argp:cpp.VarList):Void;
+	static function pushvfstring(L:cpp.RawPointer<Lua_State>, s:cpp.ConstCharStar, argp:cpp.VarList):cpp.ConstCharStar;
 
 	/**
 	 * Push a formatted string onto the stack.
@@ -678,7 +678,7 @@ extern class Lua
 	 * @param idx The index of the table.
 	 */
 	@:native('lua_rawget')
-	static function rawget(L:cpp.RawPointer<Lua_State>, idx:Int):Void;
+	static function rawget(L:cpp.RawPointer<Lua_State>, idx:Int):Int;
 
 	/**
 	 * Raw get a field from a table.
@@ -688,7 +688,7 @@ extern class Lua
 	 * @param n The key of the field to get.
 	 */
 	@:native('lua_rawgeti')
-	static function rawgeti(L:cpp.RawPointer<Lua_State>, idx:Int, n:Int):Void;
+	static function rawgeti(L:cpp.RawPointer<Lua_State>, idx:Int, n:Int):Int;
 
 	/**
 	 * Create a new table and push it onto the stack.
@@ -1022,7 +1022,7 @@ extern class Lua
 	 * @return The error code.
 	 */
 	@:native('lua_error')
-	static function error(L:cpp.RawPointer<Lua_State>):Int;
+	static function error(L:cpp.RawPointer<Lua_State>):Void;
 
 	/**
 	 * Get the next key-value pair from the table at the given index.
@@ -1053,15 +1053,15 @@ extern class Lua
 	@:native('lua_getallocf')
 	static function getallocf(L:cpp.RawPointer<Lua_State>, ud:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):Lua_Alloc;
 
-	/**
-	 * Set the memory allocator function.
-	 *
-	 * @param L The Lua state.
-	 * @param f The memory allocator function.
-	 * @param ud User data.
-	 */
-	@:native('lua_setallocf')
-	static function setallocf(L:cpp.RawPointer<Lua_State>, f:Lua_Alloc, ud:cpp.RawPointer<cpp.Void>):Void;
+	// /**
+	//  * Set the memory allocator function.
+	//  *
+	//  * @param L The Lua state.
+	//  * @param f The memory allocator function.
+	//  * @param ud User data.
+	//  */
+	// @:native('lua_setallocf')
+	// static function setallocf(L:cpp.RawPointer<Lua_State>, f:Lua_Alloc, ud:cpp.RawPointer<cpp.Void>):Void;
 
 	/**
 	 * Pop n elements from the stack.
@@ -1230,13 +1230,13 @@ extern class Lua
 	@:native('lua_tostring')
 	static function tostring(L:cpp.RawPointer<Lua_State>, i:Int):cpp.ConstCharStar;
 
-	/**
-	 * Get the registry table.
-	 *
-	 * @param L The Lua state.
-	 */
-	@:native('lua_getregistry')
-	static function getregistry(L:cpp.RawPointer<Lua_State>):Void;
+	// /**
+	//  * Get the registry table.
+	//  *
+	//  * @param L The Lua state.
+	//  */
+	// @:native('lua_getregistry')
+	// static function getregistry(L:cpp.RawPointer<Lua_State>):Void;
 
 	/**
 	 * Get the main thread of the given state.
@@ -1343,7 +1343,7 @@ extern class Lua
 	 * @return The unsigned integer.
 	 */
 	@:native('lua_tounsignedx')
-	static function tounsignedx(L:cpp.RawPointer<Lua_State>, idx:Int, isnum:cpp.RawPointer<Int>):Int;
+	static function tounsignedx(L:cpp.RawPointer<Lua_State>, idx:Int, isnum:cpp.RawPointer<Int>):UInt;
 
 	/**
 	 * Get the vector at the given index.
@@ -1352,7 +1352,7 @@ extern class Lua
 	 * @return Pointer to 3 (or 4) floats, or null.
 	 */
 	@:native('lua_tovector')
-	static function tovector(L:cpp.RawPointer<Lua_State>, idx:Int):cpp.RawPointer<Single>;
+	static function tovector(L:cpp.RawPointer<Lua_State>, idx:Int):cpp.RawConstPointer<Single>;
 
 	/**
 	 * Convert value to 64-bit integer.
@@ -1397,7 +1397,7 @@ extern class Lua
 	 * @param n The unsigned value.
 	 */
 	@:native('lua_pushunsigned')
-	static function pushunsigned(L:cpp.RawPointer<Lua_State>, n:Int):Void;
+	static function pushunsigned(L:cpp.RawPointer<Lua_State>, n:UInt):Void;
 
 	/**
 	 * Push a vector (3-component) onto the stack.
@@ -1481,7 +1481,7 @@ extern class Lua
 	 * @param tag The tag id.
 	 */
 	@:native('lua_rawgetptagged')
-	static function rawgetptagged(L:cpp.RawPointer<Lua_State>, idx:Int, p:cpp.RawPointer<cpp.Void>, tag:Int):Void;
+	static function rawgetptagged(L:cpp.RawPointer<Lua_State>, idx:Int, p:cpp.RawPointer<cpp.Void>, tag:Int):Int;
 
 	/**
 	 * Raw set table entry by tagged pointer key.

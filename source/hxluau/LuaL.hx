@@ -47,7 +47,7 @@ extern class LuaL
 	 * @return The error code.
 	 */
 	@:native('luaL_argerror')
-	static function argerror(L:cpp.RawPointer<Lua_State>, numarg:Int, extramsg:cpp.ConstCharStar):Int;
+	static function argerror(L:cpp.RawPointer<Lua_State>, numarg:Int, extramsg:cpp.ConstCharStar):Void;
 
 	/**
 	 * Raises a type error for an argument.
@@ -56,7 +56,7 @@ extern class LuaL
 	 * @param tname The expected type name.
 	 */
 	@:native('luaL_typeerrorL')
-	static function typeerror(L:cpp.RawPointer<Lua_State>, narg:Int, tname:cpp.ConstCharStar):Int;
+	static function typeerror(L:cpp.RawPointer<Lua_State>, narg:Int, tname:cpp.ConstCharStar):Void;
 
 	/**
 	 * Checks and returns a string argument.
@@ -191,7 +191,7 @@ extern class LuaL
 	 * @return The error code.
 	 */
 	@:native('luaL_error')
-	static function error(L:cpp.RawPointer<Lua_State>, fmt:cpp.ConstCharStar, args:cpp.Rest<cpp.VarArg>):Int;
+	static function error(L:cpp.RawPointer<Lua_State>, fmt:cpp.ConstCharStar, args:cpp.Rest<cpp.VarArg>):Void;
 
 	/**
 	 * Checks an option argument.
@@ -203,7 +203,7 @@ extern class LuaL
 	 * @return The index of the option.
 	 */
 	@:native('luaL_checkoption')
-	static function checkoption(L:cpp.RawPointer<Lua_State>, narg:Int, def:cpp.ConstCharStar, lst:cpp.ConstCharStar):Int;
+	static function checkoption(L:cpp.RawPointer<Lua_State>, narg:Int, def:cpp.ConstCharStar, lst:cpp.RawPointer<cpp.ConstCharStar>):Int;
 
 	/**
 	 * No reference constant.
@@ -470,7 +470,7 @@ extern class LuaL
 	 * @return The unsigned integer.
 	 */
 	@:native('luaL_checkunsigned')
-	static function checkunsigned(L:cpp.RawPointer<Lua_State>, numArg:Int):Int;
+	static function checkunsigned(L:cpp.RawPointer<Lua_State>, numArg:Int):UInt;
 
 	/**
 	 * Returns an optional unsigned integer argument.
@@ -480,7 +480,7 @@ extern class LuaL
 	 * @return The unsigned integer.
 	 */
 	@:native('luaL_optunsigned')
-	static function optunsigned(L:cpp.RawPointer<Lua_State>, numArg:Int, def:Int):Int;
+	static function optunsigned(L:cpp.RawPointer<Lua_State>, numArg:Int, def:UInt):UInt;
 
 	/**
 	 * Checks and returns a vector argument.
@@ -489,7 +489,7 @@ extern class LuaL
 	 * @return Pointer to 3 (or 4) floats.
 	 */
 	@:native('luaL_checkvector')
-	static function checkvector(L:cpp.RawPointer<Lua_State>, narg:Int):cpp.RawPointer<Single>;
+	static function checkvector(L:cpp.RawPointer<Lua_State>, narg:Int):cpp.RawConstPointer<Single>;
 
 	/**
 	 * Returns an optional vector argument.
@@ -499,7 +499,7 @@ extern class LuaL
 	 * @return Pointer to 3 (or 4) floats.
 	 */
 	@:native('luaL_optvector')
-	static function optvector(L:cpp.RawPointer<Lua_State>, narg:Int, def:cpp.RawPointer<Single>):cpp.RawPointer<Single>;
+	static function optvector(L:cpp.RawPointer<Lua_State>, narg:Int, def:cpp.RawConstPointer<Single>):cpp.RawConstPointer<Single>;
 
 	/**
 	 * Checks and returns a buffer argument.

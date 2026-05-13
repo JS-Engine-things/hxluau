@@ -116,6 +116,11 @@ extern class Lua_Debug
 	var nups:Int;
 
 	/**
+	 * Number of parameters.
+	 */
+	var nparams:Int;
+
+	/**
 	 * Line where the function was defined.
 	 */
 	var linedefined:Int;
