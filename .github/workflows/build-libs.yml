@@ -407,12 +407,13 @@ jobs:
           cmake --build . --config MinSizeRel
 
           echo "Listing libLuau.*.a recursively:"
-          find . -name 'libLuau.Ast.a'      -type f -print || true
-          find . -name 'libLuau.Bytecode.a'  -type f -print || true
-          find . -name 'libLuau.Common.a'    -type f -print || true
-          find . -name 'libLuau.Compiler.a'  -type f -print || true
-          find . -name 'libLuau.Config.a'    -type f -print || true
-          find . -name 'libLuau.VM.a'        -type f -print || true
+          find . -name 'libLuau.Ast.a'     -type f -print || true
+          find . -name 'libLuau.Bytecode.a' -type f -print || true
+          find . -name 'libLuau.Common.a'   -type f -print || true
+          find . -name 'libLuau.Compiler.a' -type f -print || true
+          find . -name 'libLuau.Config.a'   -type f -print || true
+          find . -name 'libLuau.VM.a'       -type f -print || true
+          find . -name 'libLuau.CodeGen.a'  -type f -print || true
 
           echo "create ${{ matrix.lib_name }}" > combine.mri
           find . -name 'libLuau.Ast.a'      -type f -print0 | xargs -0 -I{} echo "addlib {}" >> combine.mri
@@ -421,6 +422,7 @@ jobs:
           find . -name 'libLuau.Compiler.a'  -type f -print0 | xargs -0 -I{} echo "addlib {}" >> combine.mri
           find . -name 'libLuau.Config.a'    -type f -print0 | xargs -0 -I{} echo "addlib {}" >> combine.mri
           find . -name 'libLuau.VM.a'        -type f -print0 | xargs -0 -I{} echo "addlib {}" >> combine.mri
+          find . -name 'libLuau.CodeGen.a'   -type f -print0 | xargs -0 -I{} echo "addlib {}" >> combine.mri
           echo "save" >> combine.mri
           echo "end" >> combine.mri
           ar -M < combine.mri
