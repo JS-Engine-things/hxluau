@@ -176,6 +176,23 @@ static void ensure_codegen_and_compile(lua_State* L)
 }
 
 // ------------------------------------
+// Strip UTF-8 BOM (U+FEFF = 0xEF 0xBB 0xBF) from a source buffer.
+// Returns pointer past the BOM (if present) and adjusts size accordingly.
+// ------------------------------------
+static const char* stripBOM(const char* src, size_t& size)
+{
+    if (size >= 3 &&
+        (unsigned char)src[0] == 0xEF &&
+        (unsigned char)src[1] == 0xBB &&
+        (unsigned char)src[2] == 0xBF)
+    {
+        src += 3;
+        size -= 3;
+    }
+    return src;
+}
+
+// ------------------------------------
 // Global compile options for luau_compile
 // ------------------------------------
 static lua_CompileOptions g_compile_opts = {
@@ -238,8 +255,12 @@ int hxluau_LuaL_loadstring_wrapper(lua_State* L, const char* s)
 {
     GcGuard gc(L);
 
+    // strip BOM if available
+    size_t srcSize = strlen(s);
+    const char* src = stripBOM(s, srcSize);
+
     size_t bytecodeSize;
-    char* bytecode = luau_compile(s, strlen(s), &g_compile_opts, &bytecodeSize);
+    char* bytecode = luau_compile(src, srcSize, &g_compile_opts, &bytecodeSize);
 
     if (!bytecode)
     {
@@ -290,8 +311,12 @@ int hxluau_LuaL_loadfile_wrapper(lua_State* L, const char* filename)
         return LUA_ERRFILE;
     }
 
+    // strip BOM if available
+    size_t srcSize = size;
+    const char* src = stripBOM(buffer.data(), srcSize);
+
     // Compute content hash for cache lookup
-    uint64_t h = BytecodeCache::fnv1a64(buffer.data(), size);
+    uint64_t h = BytecodeCache::fnv1a64(src, srcSize);
 
     // Try cache first
     std::string cached;
@@ -305,7 +330,7 @@ int hxluau_LuaL_loadfile_wrapper(lua_State* L, const char* filename)
     else
     {
         size_t bytecodeSize;
-        char* bytecode = luau_compile(buffer.data(), size, &g_compile_opts, &bytecodeSize);
+        char* bytecode = luau_compile(src, srcSize, &g_compile_opts, &bytecodeSize);
 
         if (!bytecode)
         {
