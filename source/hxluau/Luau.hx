@@ -145,4 +145,22 @@ extern class Luau
 	 */
 	@:native("hxluau_set_compile_disabled_builtins")
 	static function setCompileDisabledBuiltins(builtins:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>):Void;
+
+	/**
+	 * Enable or disable Luau codegen counter recording intent for this process.
+	 *
+	 * Counters let you collect per-block native execution statistics (regular
+	 * blocks executed, fallback blocks executed, VM exits taken) for profiling
+	 * purposes.  They are surfaced after execution via `Lua.getcounters`.
+	 *
+	 * @param enable 1 to enable, 0 to disable.
+	 */
+	@:native("hxluau_enable_counter_support")
+	static function enableCounterSupport(enable:Int):Void;
+
+	/**
+	 * Returns 1 if counter support was previously enabled via `enableCounterSupport`, 0 otherwise.
+	 */
+	@:native("hxluau_counter_support_enabled")
+	static function counterSupportEnabled():Int;
 }

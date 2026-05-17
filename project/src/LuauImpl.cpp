@@ -489,17 +489,42 @@ void hxluau_set_compile_disabled_builtins(const char* const* disabledBuiltins)
 
 const char* hxluau_version_string()
 {
-    return "Luau 0.720";
+    return "Luau 0.721";
 }
 
 const char* hxluau_version_release()
 {
-    return "Luau 0.720";
+    return "Luau 0.721";
 }
 
 int hxluau_version_num()
 {
-    return 720;
+    return 721;
+}
+
+// Tracks whether the caller has opted into codegen counter recording.
+// The real gate is FFlag::LuauCodegenCounterSupport inside Luau, which is a
+// C++ fast-flag not reachable from the public C headers.  Embedders who need
+// full counter support should:
+//   1. Call hxluau_enable_counter_support(1) to register their intent here.
+//   2. From their own C++ code (or a thin native bridge), also set
+//      FFlag::LuauCodegenCounterSupport.value = true before the first
+//      codegen_create/compile call.
+// The flag stored here is used by future hxluau helpers and by
+// hxluau_counter_support_enabled() so Haxe callers can query the state.
+static bool g_counter_support_enabled = false;
+
+// Enable or disable Luau codegen counter recording intent.
+// See comment above for the two-step requirement when using the full C++ path.
+void hxluau_enable_counter_support(int enable)
+{
+    g_counter_support_enabled = (enable != 0);
+}
+
+// Returns 1 if counter support was enabled, 0 otherwise.
+int hxluau_counter_support_enabled()
+{
+    return g_counter_support_enabled ? 1 : 0;
 }
 
 } // extern "C"
