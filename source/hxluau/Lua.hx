@@ -225,18 +225,33 @@ extern class Lua
 	@:native('LUA_MINSTACK')
 	static var MINSTACK:Int;
 
+	/**
+	 * Coroutine status: the coroutine is currently running.
+	 */
 	@:native('LUA_CORUN')
 	static var CORUN:Int;
 
+	/**
+	 * Coroutine status: the coroutine is suspended (yielded or not yet started).
+	 */
 	@:native('LUA_COSUS')
 	static var COSUS:Int;
 
+	/**
+	 * Coroutine status: the coroutine is normal — it resumed another coroutine and is waiting.
+	 */
 	@:native('LUA_CONOR')
 	static var CONOR:Int;
 
+	/**
+	 * Coroutine status: the coroutine finished execution normally.
+	 */
 	@:native('LUA_COFIN')
 	static var COFIN:Int;
 
+	/**
+	 * Coroutine status: the coroutine finished with an unhandled error.
+	 */
 	@:native('LUA_COERR')
 	static var COERR:Int;
 

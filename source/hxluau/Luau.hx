@@ -45,12 +45,18 @@ extern class Luau
 
 	/**
 	 * Executes a Lua string (compile with Luau and pcall).
+	 *
+	 * @param L The Lua state.
+	 * @param str The Lua source string to execute.
+	 * @return The status code (0 on success).
 	 */
 	@:native("hxluau_dostring_wrapper")
 	static function dostring(L:cpp.RawPointer<Lua_State>, str:cpp.ConstCharStar):Int;
 
 	/**
 	 * Registers custom print implementation into global 'print'.
+	 *
+	 * @param L The Lua state.
 	 */
 	@:native("hxluau_register_print")
 	static function registerPrint(L:cpp.RawPointer<Lua_State>):Void;

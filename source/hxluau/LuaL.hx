@@ -351,12 +351,6 @@ extern class LuaL
 	static function addchar(B:cpp.RawPointer<LuaL_Buffer>, c:cpp.Char):Void;
 
 	/**
-	 * Adds a character to a buffer (alternative name).
-	 *
-	 * @param B The buffer.
-	 * @param c The character to add.
-	 */
-	/**
 	 * Initializes a buffer.
 	 *
 	 * @param L The Lua state.

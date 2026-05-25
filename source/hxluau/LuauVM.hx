@@ -49,12 +49,17 @@ extern class LuauVM
 
 	/**
 	 * Creates a code generator instance bound to the given state. Must check support first.
+	 *
+	 * @param L The Lua state.
 	 */
 	@:native('luau_codegen_create')
 	static function codegen_create(L:cpp.RawPointer<Lua_State>):Void;
 
 	/**
 	 * Builds native code for target function (and inner functions) at stack index `idx`.
+	 *
+	 * @param L The Lua state.
+	 * @param idx Stack index of the function to compile.
 	 */
 	@:native('luau_codegen_compile')
 	static function codegen_compile(L:cpp.RawPointer<Lua_State>, idx:Int):Void;
