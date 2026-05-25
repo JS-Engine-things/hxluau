@@ -20,7 +20,7 @@ extern class Luau
 	 * @param filename The name of the file to load.
 	 * @return The result of the load operation.
 	 */
-	@:native("hxluau_LuaL_loadfile_wrapper")
+	@:native("hxluau_loadfile_wrapper")
 	static function loadfile(L:cpp.RawPointer<Lua_State>, filename:cpp.ConstCharStar):Int;
 
 	/**
@@ -30,7 +30,7 @@ extern class Luau
 	 * @param s The string to load.
 	 * @return The result of the load operation.
 	 */
-	@:native("hxluau_LuaL_loadstring_wrapper")
+	@:native("hxluau_loadstring_wrapper")
 	static function loadstring(L:cpp.RawPointer<Lua_State>, s:cpp.ConstCharStar):Int;
 
 	/**
@@ -40,13 +40,13 @@ extern class Luau
 	 * @param filename The name of the file.
 	 * @return The status code (0 on success).
 	 */
-	@:native("hxluau_LuaL_dofile_wrapper")
+	@:native("hxluau_dofile_wrapper")
 	static function dofile(L:cpp.RawPointer<Lua_State>, filename:cpp.ConstCharStar):Int;
 
 	/**
 	 * Executes a Lua string (compile with Luau and pcall).
 	 */
-	@:native("hxluau_LuaL_dostring_wrapper")
+	@:native("hxluau_dostring_wrapper")
 	static function dostring(L:cpp.RawPointer<Lua_State>, str:cpp.ConstCharStar):Int;
 
 	/**

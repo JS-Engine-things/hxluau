@@ -59,6 +59,26 @@ extern class Lua
 	static var REGISTRYINDEX:Int;
 
 	/**
+	 * Environment index.
+	 */
+	@:native('LUA_ENVIRONINDEX')
+	static var ENVIRONINDEX:Int;
+
+	/**
+	 * Globals index.
+	 */
+	@:native('LUA_GLOBALSINDEX')
+	static var GLOBALSINDEX:Int;
+
+	/**
+	 * Check if an index is a pseudo-index.
+	 * @param i The index to check.
+	 * @return 1 if pseudo, 0 otherwise.
+	 */
+	@:native('lua_ispseudo')
+	static function ispseudo(i:Int):Int;
+
+	/**
 	 * Get the upvalue index.
 	 *
 	 * @param i The upvalue index.
@@ -447,6 +467,15 @@ extern class Lua
 	static function tointeger(L:cpp.RawPointer<Lua_State>, idx:Int):Lua_Integer;
 
 	/**
+	 * Convert a value to an unsigned integer (convenience macro).
+	 * @param L The Lua state.
+	 * @param idx The index of the value.
+	 * @return The unsigned integer.
+	 */
+	@:native('lua_tounsigned')
+	static function tounsigned(L:cpp.RawPointer<Lua_State>, idx:Int):UInt;
+
+	/**
 	 * Convert a value to a boolean.
 	 *
 	 * @param L The Lua state.
@@ -798,6 +827,14 @@ extern class Lua
 	 */
 	@:native('lua_unref')
 	static function unref(L:cpp.RawPointer<Lua_State>, ref:Int):Void;
+
+	/**
+	 * Get a reference from the registry (macro: rawgeti(L, LUA_REGISTRYINDEX, ref)).
+	 * @param L The Lua state.
+	 * @param ref The reference index (from lua_ref).
+	 */
+	@:native('lua_getref')
+	static function getref(L:cpp.RawPointer<Lua_State>, ref:Int):Int;
 
 	/**
 	 * Call a function.
@@ -1183,6 +1220,42 @@ extern class Lua
 	static function isthread(L:cpp.RawPointer<Lua_State>, n:Int):Int;
 
 	/**
+	 * Check if the value at the given index is a vector.
+	 * @param L The Lua state.
+	 * @param n The index of the value.
+	 * @return 1 if the value is a vector, 0 otherwise.
+	 */
+	@:native('lua_isvector')
+	static function isvector(L:cpp.RawPointer<Lua_State>, n:Int):Int;
+
+	/**
+	 * Check if the value at the given index is a buffer.
+	 * @param L The Lua state.
+	 * @param n The index of the value.
+	 * @return 1 if the value is a buffer, 0 otherwise.
+	 */
+	@:native('lua_isbuffer')
+	static function isbuffer(L:cpp.RawPointer<Lua_State>, n:Int):Int;
+
+	/**
+	 * Check if the value at the given index is a class.
+	 * @param L The Lua state.
+	 * @param n The index of the value.
+	 * @return 1 if the value is a class, 0 otherwise.
+	 */
+	@:native('lua_isclass')
+	static function isclass(L:cpp.RawPointer<Lua_State>, n:Int):Int;
+
+	/**
+	 * Check if the value at the given index is an object.
+	 * @param L The Lua state.
+	 * @param n The index of the value.
+	 * @return 1 if the value is an object, 0 otherwise.
+	 */
+	@:native('lua_isobject')
+	static function isobject(L:cpp.RawPointer<Lua_State>, n:Int):Int;
+
+	/**
 	 * Check if the value at the given index is none.
 	 *
 	 * @param L The Lua state.
@@ -1207,10 +1280,9 @@ extern class Lua
 	 *
 	 * @param L The Lua state.
 	 * @param s The literal string.
-	 * @return The literal string.
 	 */
 	@:native('lua_pushliteral')
-	static function pushliteral(L:cpp.RawPointer<Lua_State>, s:cpp.ConstCharStar):cpp.ConstCharStar;
+	static function pushliteral(L:cpp.RawPointer<Lua_State>, s:cpp.ConstCharStar):Void;
 
 	/**
 	 * Set a global value.
@@ -1496,6 +1568,16 @@ extern class Lua
 	static function rawgetptagged(L:cpp.RawPointer<Lua_State>, idx:Int, p:cpp.RawPointer<cpp.Void>, tag:Int):Int;
 
 	/**
+	 * Raw get table entry by pointer key (macro: rawgetptagged with tag 0).
+	 * @param L The Lua state.
+	 * @param idx The table index.
+	 * @param p The pointer key.
+	 * @return The type of the pushed value.
+	 */
+	@:native('lua_rawgetp')
+	static function rawgetp(L:cpp.RawPointer<Lua_State>, idx:Int, p:cpp.RawPointer<cpp.Void>):Int;
+
+	/**
 	 * Raw set table entry by tagged pointer key.
 	 * @param L The Lua state.
 	 * @param idx The table index.
@@ -1504,6 +1586,15 @@ extern class Lua
 	 */
 	@:native('lua_rawsetptagged')
 	static function rawsetptagged(L:cpp.RawPointer<Lua_State>, idx:Int, p:cpp.RawPointer<cpp.Void>, tag:Int):Void;
+
+	/**
+	 * Raw set table entry by pointer key (macro: rawsetptagged with tag 0).
+	 * @param L The Lua state.
+	 * @param idx The table index.
+	 * @param p The pointer key.
+	 */
+	@:native('lua_rawsetp')
+	static function rawsetp(L:cpp.RawPointer<Lua_State>, idx:Int, p:cpp.RawPointer<cpp.Void>):Void;
 
 	/**
 	 * Yield for a debug breakpoint.

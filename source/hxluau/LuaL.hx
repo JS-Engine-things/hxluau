@@ -260,6 +260,16 @@ extern class LuaL
 	static function argcheck(L:cpp.RawPointer<Lua_State>, cond:Int, numarg:Int, extramsg:cpp.ConstCharStar):Void;
 
 	/**
+	 * Checks a condition and raises a type error if false (macro: luaL_argexpected).
+	 * @param L The Lua state.
+	 * @param cond The condition.
+	 * @param arg The argument index.
+	 * @param tname The expected type name.
+	 */
+	@:native('luaL_argexpected')
+	static function argexpected(L:cpp.RawPointer<Lua_State>, cond:Int, arg:Int, tname:cpp.ConstCharStar):Void;
+
+	/**
 	 * Checks and returns a string argument.
 	 *
 	 * @param L The Lua state.
