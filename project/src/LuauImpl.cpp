@@ -472,6 +472,12 @@ void hxluau_set_compile_vector_type(const char* type)
     g_compile_opts.vectorType = g_vector_type.data();
 }
 
+void hxluau_set_compile_vector_ctor(const char* ctor)
+{
+    g_vector_ctor = ctor ? ctor : "";
+    g_compile_opts.vectorCtor = g_vector_ctor.data();
+}
+
 void hxluau_set_compile_mutable_globals(const char* const* mutableGlobals)
 {
     g_compile_opts.mutableGlobals = mutableGlobals;
@@ -489,17 +495,17 @@ void hxluau_set_compile_disabled_builtins(const char* const* disabledBuiltins)
 
 const char* hxluau_version_string()
 {
-    return "Luau 0.721";
+    return "Luau 0.722";
 }
 
 const char* hxluau_version_release()
 {
-    return "Luau 0.721";
+    return "Luau 0.722";
 }
 
 int hxluau_version_num()
 {
-    return 721;
+    return 722;
 }
 
 // Tracks whether the caller has opted into codegen counter recording.

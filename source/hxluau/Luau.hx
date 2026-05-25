@@ -126,6 +126,13 @@ extern class Luau
 	static function setCompileVectorType(type:cpp.ConstCharStar):Void;
 
 	/**
+	 * Set a custom vector constructor name for the compiler.
+	 * @param ctor Constructor name (e.g. "vec3"), or null for default
+	 */
+	@:native("hxluau_set_compile_vector_ctor")
+	static function setCompileVectorCtor(ctor:cpp.ConstCharStar):Void;
+
+	/**
 	 * Set the list of globals that are mutable (disables import optimization for their fields).
 	 * @param globals Null-terminated array of global names, or null for none.
 	 */

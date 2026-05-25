@@ -152,6 +152,21 @@ typedef Lua_Hook = cpp.Callable<(L:cpp.RawPointer<Lua_State>, ar:cpp.RawPointer<
 typedef Lua_Destructor = cpp.Callable<(L:cpp.RawPointer<Lua_State>, userdata:cpp.RawPointer<cpp.Void>) -> Void>;
 
 /**
+ * Counter function callback for native code execution profiling.
+ */
+typedef Lua_CounterFunction = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, functionName:cpp.ConstCharStar, linedefined:Int) -> Void>;
+
+/**
+ * Counter value callback for native code execution profiling.
+ */
+typedef Lua_CounterValue = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, kind:Int, line:Int, hits:haxe.UInt64) -> Void>;
+
+/**
+ * Coverage callback for code coverage tracking.
+ */
+typedef Lua_Coverage = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, functionName:cpp.ConstCharStar, linedefined:Int, depth:Int, hits:cpp.RawPointer<Int>, size:cpp.SizeT) -> Void>;
+
+/**
  * Buffer for building Lua strings.
  */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')

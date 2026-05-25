@@ -188,6 +188,18 @@ extern class Lua
 	static var TBUFFER:Int;
 
 	/**
+	 * Type for class.
+	 */
+	@:native('LUA_TCLASS')
+	static var TCLASS:Int;
+
+	/**
+	 * Type for object.
+	 */
+	@:native('LUA_TOBJECT')
+	static var TOBJECT:Int;
+
+	/**
 	 * Minimum stack size.
 	 */
 	@:native('LUA_MINSTACK')
@@ -1785,6 +1797,18 @@ extern class Lua
 	static function newuserdatadtor(L:cpp.RawPointer<Lua_State>, sz:cpp.SizeT, dtor:cpp.Callable<(raw:cpp.RawPointer<cpp.Void>) -> Void>):cpp.RawPointer<cpp.Void>;
 
 	/**
+	 * Retrieve code coverage information for a function.
+	 *
+	 * @param L        The Lua state.
+	 * @param funcindex Stack index of the function.
+	 * @param context   Opaque user pointer passed to the callback.
+	 * @param callback  Called for each function with coverage data.
+	 * 
+	 */
+	@:native('lua_getcoverage')
+	static function getcoverage(L:cpp.RawPointer<Lua_State>, funcindex:Int, context:cpp.RawPointer<cpp.Void>, callback:Lua_Coverage):Void;
+
+	/**
 	 * Enumerate native codegen execution counters recorded in a compiled function.
 	 *
 	 * Counter kinds (int `kind` in valueCallback):
@@ -1799,5 +1823,5 @@ extern class Lua
 	 *                   Signature: `void cb(void* ctx, int kind, int line, uint64_t hits)`
 	 */
 	@:native('lua_getcounters')
-	static function getcounters(L:cpp.RawPointer<Lua_State>, funcindex:Int, context:cpp.RawPointer<cpp.Void>, functioncb:cpp.RawPointer<cpp.Void>, valuecb:cpp.RawPointer<cpp.Void>):Void;
+	static function getcounters(L:cpp.RawPointer<Lua_State>, funcindex:Int, context:cpp.RawPointer<cpp.Void>, functioncb:Lua_CounterFunction, valuecb:Lua_CounterValue):Void;
 }
