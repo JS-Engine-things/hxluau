@@ -221,6 +221,7 @@ static bool g_autocompile_enabled = false;
 // Storage for extended compile option string pointers (must outlive g_compile_opts)
 static std::string g_vector_lib;
 static std::string g_vector_type;
+static std::string g_vector_ctor;
 
 extern "C" {
 

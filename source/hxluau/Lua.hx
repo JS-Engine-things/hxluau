@@ -1619,6 +1619,69 @@ extern class Lua
 	static function getuserdatametatable(L:cpp.RawPointer<Lua_State>, tag:Int):Void;
 
 	/**
+	 * Register direct userdata access callbacks for __index, __newindex and __namecall.
+	 * @param L The Lua state.
+	 * @param tag The userdata tag.
+	 * @param get Getter callback (nullable).
+	 * @param set Setter callback (nullable).
+	 * @param namecall Namecall callback (nullable).
+	 * @return 1 on success, 0 on failure.
+	 */
+	@:native('lua_registeruserdatadirectaccess')
+	static function registeruserdatadirectaccess(L:cpp.RawPointer<Lua_State>, tag:Int, get:Lua_UserdataDirectAccess, set:Lua_UserdataDirectAccess, namecall:Lua_UserdataDirectNamecall):Int;
+
+	/**
+	 * Register a direct field getter for a specific userdata tag + field name.
+	 * @param L The Lua state.
+	 * @param tag The userdata tag.
+	 * @param field The field name to bind.
+	 * @param fn The direct field getter callback.
+	 */
+	@:native('lua_registeruserdatadirectfieldget')
+	static function registeruserdatadirectfieldget(L:cpp.RawPointer<Lua_State>, tag:Int, field:cpp.ConstCharStar, fn:Lua_UserdataDirectFieldGet):Void;
+
+	/**
+	 * Set a direct-field result to a number value.
+	 * @param result Opaque TValue output slot.
+	 * @param n The number value.
+	 */
+	@:native('lua_userdatadirectfield_setnumber')
+	static function userdatadirectfield_setnumber(result:cpp.RawPointer<cpp.Void>, n:Lua_Number):Void;
+
+	/**
+	 * Set a direct-field result to a vector value.
+	 * @param result Opaque TValue output slot.
+	 * @param x X component.
+	 * @param y Y component.
+	 * @param z Z component.
+	 */
+	@:native('lua_userdatadirectfield_setvector')
+	static function userdatadirectfield_setvector(result:cpp.RawPointer<cpp.Void>, x:Float, y:Float, z:Float):Void;
+
+	/**
+	 * Set a direct-field result to a boolean value.
+	 * @param result Opaque TValue output slot.
+	 * @param b The boolean value.
+	 */
+	@:native('lua_userdatadirectfield_setboolean')
+	static function userdatadirectfield_setboolean(result:cpp.RawPointer<cpp.Void>, b:Int):Void;
+
+	/**
+	 * Set a direct-field result to a 64-bit integer value.
+	 * @param result Opaque TValue output slot.
+	 * @param n The integer value.
+	 */
+	@:native('lua_userdatadirectfield_setinteger64')
+	static function userdatadirectfield_setinteger64(result:cpp.RawPointer<cpp.Void>, n:haxe.Int64):Void;
+
+	/**
+	 * Set a direct-field result to nil.
+	 * @param result Opaque TValue output slot.
+	 */
+	@:native('lua_userdatadirectfield_setnil')
+	static function userdatadirectfield_setnil(result:cpp.RawPointer<cpp.Void>):Void;
+
+	/**
 	 * Create and push a tagged userdata block.
 	 * @param L The Lua state.
 	 * @param sz The block size.
@@ -1671,6 +1734,15 @@ extern class Lua
 	 */
 	@:native('lua_clock')
 	static function clock():Lua_Number;
+
+	/**
+	 * Get the callbacks struct for a Lua state, allowing customization
+	 * of interrupt, panic, debug hooks, etc.
+	 * @param L The Lua state.
+	 * @return Pointer to the lua_Callbacks struct.
+	 */
+	@:native('lua_callbacks')
+	static function callbacks(L:cpp.RawPointer<Lua_State>):cpp.RawPointer<Lua_Callbacks>;
 
 	/**
 	 * Get the current stack depth.
