@@ -177,7 +177,7 @@ typedef Lua_CounterFunction = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, fu
 /**
  * Counter value callback for native code execution profiling.
  */
-typedef Lua_CounterValue = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, kind:Int, line:Int, hits:haxe.UInt64) -> Void>;
+typedef Lua_CounterValue = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, kind:Int, line:Int, hits:cpp.UInt64) -> Void>;
 
 /**
  * Coverage callback for code coverage tracking.
