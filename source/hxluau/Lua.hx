@@ -226,6 +226,68 @@ extern class Lua
 	static var MINSTACK:Int;
 
 	/**
+	 * Maximum size for the textual description of a source (size of `short_src`).
+	 */
+	@:native('LUA_IDSIZE')
+	static var IDSIZE:Int;
+
+	/**
+	 * Upper limit on Lua stack slots usable by a single C function.
+	 */
+	@:native('LUAI_MAXCSTACK')
+	static var MAXCSTACK:Int;
+
+	/**
+	 * Maximum number of nested Lua calls.
+	 */
+	@:native('LUAI_MAXCALLS')
+	static var MAXCALLS:Int;
+
+	/**
+	 * Maximum depth for nested C calls.
+	 */
+	@:native('LUAI_MAXCCALLS')
+	static var MAXCCALLS:Int;
+
+	/**
+	 * Size of the on-stack buffer used by string operations (`LuaL_Buffer`).
+	 */
+	@:native('LUA_BUFFERSIZE')
+	static var BUFFERSIZE:Int;
+
+	/**
+	 * Number of valid userdata tags (tags passed to the tagged-userdata API
+	 * must be in the range `0..UTAG_LIMIT-1`).
+	 */
+	@:native('LUA_UTAG_LIMIT')
+	static var UTAG_LIMIT:Int;
+
+	/**
+	 * Number of valid light userdata tags (`0..LUTAG_LIMIT-1`).
+	 */
+	@:native('LUA_LUTAG_LIMIT')
+	static var LUTAG_LIMIT:Int;
+
+	/**
+	 * Number of separate memory categories (`lua_setmemcat` / `lua_totalbytes`
+	 * accept a category in the range `0..MEMORY_CATEGORIES-1`).
+	 */
+	@:native('LUA_MEMORY_CATEGORIES')
+	static var MEMORY_CATEGORIES:Int;
+
+	/**
+	 * Maximum number of captures supported by pattern matching.
+	 */
+	@:native('LUA_MAXCAPTURES')
+	static var MAXCAPTURES:Int;
+
+	/**
+	 * Number of float components per Luau vector (3 by default, may be 4).
+	 */
+	@:native('LUA_VECTOR_SIZE')
+	static var VECTOR_SIZE:Int;
+
+	/**
 	 * Coroutine status: the coroutine is currently running.
 	 */
 	@:native('LUA_CORUN')
@@ -874,29 +936,6 @@ extern class Lua
 	static function pcall(L:cpp.RawPointer<Lua_State>, nargs:Int, nresults:Int, errfunc:Int):Int;
 
 	/**
-	 * Load a Lua chunk.
-	 *
-	 * @param L The Lua state.
-	 * @param reader The reader function.
-	 * @param dt The user data for the reader.
-	 * @param chunkname The name of the chunk.
-	 * @return The status code.
-	 */
-	@:native('lua_load')
-	static function load(L:cpp.RawPointer<Lua_State>, reader:Lua_Reader, dt:cpp.RawPointer<cpp.Void>, chunkname:cpp.ConstCharStar):Int;
-
-	/**
-	 * Dump a Lua function as a binary chunk.
-	 *
-	 * @param L The Lua state.
-	 * @param writer The writer function.
-	 * @param data The user data for the writer.
-	 * @return The status code.
-	 */
-	@:native('lua_dump')
-	static function dump(L:cpp.RawPointer<Lua_State>, writer:Lua_Writer, data:cpp.RawPointer<cpp.Void>):Int;
-
-	/**
 	 * Yield a coroutine.
 	 *
 	 * @param L The Lua state.
@@ -961,12 +1000,6 @@ extern class Lua
 	 */
 	@:native('LUA_GCSTEP')
 	static var GCSTEP:Int;
-
-	/**
-	 * Set the garbage collector's pause.
-	 */
-	@:native('LUA_GCSETPAUSE')
-	static var GCSETPAUSE:Int;
 
 	/**
 	 * Set the garbage collector's step multiplier.

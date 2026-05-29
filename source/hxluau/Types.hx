@@ -29,16 +29,6 @@ typedef Lua_CFunction = cpp.Callable<(L:cpp.RawPointer<Lua_State>) -> Int>;
 typedef Lua_Continuation = cpp.Callable<(L:cpp.RawPointer<Lua_State>, status:Int) -> Int>;
 
 /**
- * Type for functions that read blocks when loading/dumping Lua chunks.
- */
-typedef Lua_Reader = cpp.Callable<(L:cpp.RawPointer<Lua_State>, ud:cpp.RawPointer<cpp.Void>, sz:cpp.RawPointer<cpp.SizeT>) -> cpp.ConstCharStar>;
-
-/**
- * Type for functions that write blocks when loading/dumping Lua chunks.
- */
-typedef Lua_Writer = cpp.Callable<(L:cpp.RawPointer<Lua_State>, p:cpp.RawConstPointer<cpp.Void>, sz:cpp.SizeT, ud:cpp.RawPointer<cpp.Void>) -> Int>;
-
-/**
  * Type for memory allocation functions.
  */
 typedef Lua_Alloc = cpp.Callable<(ud:cpp.RawPointer<cpp.Void>, ptr:cpp.RawPointer<cpp.Void>, osize:cpp.SizeT, nsize:cpp.SizeT) -> cpp.RawPointer<cpp.Void>>;
@@ -57,6 +47,98 @@ typedef Lua_LibraryMemberTypeCallback = cpp.Callable<(library:cpp.ConstCharStar,
  * Callback that fills a known constant value for a library member.
  */
 typedef Lua_LibraryMemberConstantCallback = cpp.Callable<(library:cpp.ConstCharStar, member:cpp.ConstCharStar, constant:cpp.RawPointer<Lua_CompileConstant>) -> Void>;
+
+/**
+ * Options controlling how `LuauVM.compile` turns source into bytecode.
+ * Mirrors the C `lua_CompileOptions` struct from `luacode.h`.
+ *
+ * A freshly allocated struct leaves every field zero/null; set only what you
+ * need before passing a pointer to `LuauVM.compile`. Passing `null` to the
+ * compiler uses its built-in defaults (optimizationLevel=1, debugLevel=1).
+ */
+@:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
+@:include('luacode.h')
+@:unreflective
+@:structAccess
+@:native('lua_CompileOptions')
+extern class Lua_CompileOptions
+{
+	/**
+	 * Allocates a new Lua_CompileOptions instance.
+	 */
+	function new():Void;
+
+	/**
+	 * Optimization level: 0 = none, 1 = baseline (keeps debuggability),
+	 * 2 = aggressive (inlining; harms debuggability). Default 1.
+	 */
+	var optimizationLevel:Int;
+
+	/**
+	 * Debug info level: 0 = none, 1 = line info & function names,
+	 * 2 = full local & upvalue names. Default 1.
+	 */
+	var debugLevel:Int;
+
+	/**
+	 * Type info level: 0 = native modules only, 1 = all modules. Default 0.
+	 */
+	var typeInfoLevel:Int;
+
+	/**
+	 * Coverage level: 0 = none, 1 = statement, 2 = statement + expression. Default 0.
+	 */
+	var coverageLevel:Int;
+
+	/**
+	 * Alternative global builtin used to construct vectors (in addition to the
+	 * default `vector.create`), or null.
+	 */
+	var vectorLib:cpp.ConstCharStar;
+
+	/**
+	 * Alternative vector constructor name, or null.
+	 */
+	var vectorCtor:cpp.ConstCharStar;
+
+	/**
+	 * Alternative vector type name for type tables, or null.
+	 */
+	var vectorType:cpp.ConstCharStar;
+
+	/**
+	 * Null-terminated array of globals that are mutable (disables the import
+	 * optimization for their fields), or null.
+	 */
+	var mutableGlobals:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>;
+
+	/**
+	 * Null-terminated array of userdata type names included in type information, or null.
+	 */
+	var userdataTypes:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>;
+
+	/**
+	 * Null-terminated array of library globals with known members, or null.
+	 */
+	var librariesWithKnownMembers:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>;
+
+	/**
+	 * Callback returning a type id for a known library member, or null.
+	 */
+	var libraryMemberTypeCb:Lua_LibraryMemberTypeCallback;
+
+	/**
+	 * Callback filling a constant value for a known library member, or null.
+	 */
+	var libraryMemberConstantCb:Lua_LibraryMemberConstantCallback;
+
+	/**
+	 * Null-terminated array of builtins excluded from fastcall
+	 * ("name" or "lib.name"), or null.
+	 */
+	var disabledBuiltins:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>;
+}
+
 /**
  * Type for numbers in Lua.
  */

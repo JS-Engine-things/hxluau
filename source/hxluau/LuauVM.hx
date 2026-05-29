@@ -19,14 +19,18 @@ extern class LuauVM
 	/**
 	 * Compile a string of Lua source code into bytecode for execution by Luau VM.
 	 *
+	 * When compilation fails, the returned buffer holds the encoded error and
+	 * still loads via `load` (which then reports the error). The buffer is
+	 * heap-allocated and must be released with `free` (e.g. `cpp.Stdlib.free`).
+	 *
 	 * @param source The Lua source code to compile.
 	 * @param size The size of the source code string.
-	 * @param options Compilation options (can be null).
+	 * @param options Compilation options (pass null for compiler defaults).
 	 * @param bytecodeSize Pointer to store the size of the resulting bytecode.
-	 * @return A pointer to the compiled bytecode, or null on error.
+	 * @return A pointer to the compiled bytecode, or null on out-of-memory.
 	 */
 	@:native('luau_compile')
-	static function compile(source:cpp.ConstCharStar, size:cpp.SizeT, options:cpp.RawPointer<cpp.Void>, bytecodeSize:cpp.Star<cpp.SizeT>):cpp.RawPointer<cpp.Char>;
+	static function compile(source:cpp.ConstCharStar, size:cpp.SizeT, options:cpp.RawPointer<Lua_CompileOptions>, bytecodeSize:cpp.Star<cpp.SizeT>):cpp.RawPointer<cpp.Char>;
 
 	/**
 	 * Load a precompiled Luau chunk into the Lua state.
