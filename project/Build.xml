@@ -32,20 +32,6 @@
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
 	</files>
 
-	<files id="__externs__">
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
-	</files>
-
 	<files id="luau">
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
@@ -206,6 +192,11 @@
 		<compilerflag value="-DFFI_BUILDING" />
 		<compilerflag value="-DFFI_STATIC_BUILD" />
 		<compilerflag value="-DHAVE_AS_X86_PCREL" unless="isMsvc" />
+		<section unless="HXCPP_CPP20">
+			<compilerflag value="/std:c++17" if="windows" unless="mingw" />
+			<compilerflag value="-std=c++17" unless="windows" />
+			<compilerflag value="-std=c++17" if="mingw" />
+		</section>
 
 		<file name="${haxelib:hxluau}/project/lib/libffi/src/prep_cif.c" />
 		<file name="${haxelib:hxluau}/project/lib/libffi/src/types.c" />
