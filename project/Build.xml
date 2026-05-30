@@ -205,6 +205,7 @@
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
 		<compilerflag value="-DFFI_BUILDING" />
 		<compilerflag value="-DFFI_STATIC_BUILD" />
+		<compilerflag value="-DHAVE_AS_X86_PCREL" unless="isMsvc" />
 
 		<file name="${haxelib:hxluau}/project/lib/libffi/src/prep_cif.c" />
 		<file name="${haxelib:hxluau}/project/lib/libffi/src/types.c" />
