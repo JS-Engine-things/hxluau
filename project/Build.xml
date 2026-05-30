@@ -3,54 +3,166 @@
 	<pragma once="true" />
 
 	<files id="haxe">
-		<compilerflag value="-I${haxelib:hxluau}/project/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/include" />
+
 		<file name="${haxelib:hxluau}/project/src/LuauImpl.cpp" />
 	</files>
 
 	<files id="__main__">
-		<compilerflag value="-I${haxelib:hxluau}/project/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/include" />
 	</files>
 
 	<files id="__externs__">
-		<compilerflag value="-I${haxelib:hxluau}/project/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/include" />
 	</files>
 
+	<files id="luau">
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/src" />
+
+		<compilerflag value="-D_CRT_SECURE_NO_WARNINGS" if="windows" unless="mingw" />
+		<compilerflag value="-fno-math-errno" unless="windows" />
+		<compilerflag value="-fno-math-errno" if="mingw" />
+		<section unless="HXCPP_CPP20">
+			<compilerflag value="/std:c++17" if="windows" unless="mingw" />
+			<compilerflag value="-std=c++17" unless="windows" />
+			<compilerflag value="-std=c++17" if="mingw" />
+		</section>
+
+		<!-- Luau.Common -->
+		<file name="${haxelib:hxluau}/project/lib/luau/Common/src/BytecodeWire.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Common/src/StringUtils.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Common/src/TimeTrace.cpp" />
+
+		<!-- Luau.Ast -->
+		<file name="${haxelib:hxluau}/project/lib/luau/Ast/src/Allocator.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Ast/src/Ast.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Ast/src/Confusables.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Ast/src/Cst.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Ast/src/Lexer.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Ast/src/Location.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Ast/src/Parser.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Ast/src/PrettyPrinter.cpp" />
+
+		<!-- Luau.Bytecode -->
+		<file name="${haxelib:hxluau}/project/lib/luau/Bytecode/src/BytecodeBuilder.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Bytecode/src/BytecodeGraph.cpp" />
+
+		<!-- Luau.Compiler -->
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/BuiltinFolding.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/Builtins.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/Compiler.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/ConstantFolding.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/CostModel.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/lcode.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/TableShape.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/Types.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Compiler/src/ValueTracking.cpp" />
+
+		<!-- Luau.VM -->
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lapi.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/laux.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lbaselib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lbitlib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lbuffer.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lbuflib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lbuiltins.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lclass.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lclasslib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lcorolib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/ldblib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/ldebug.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/ldo.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lfunc.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lgc.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lgcdebug.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/linit.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lintlib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lmathlib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lmem.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lnumprint.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lobject.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/loslib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lperf.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lstate.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lstring.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lstrlib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/ltable.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/ltablib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/ltm.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/ludata.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lutf8lib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lveclib.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lvmexecute.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lvmload.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/VM/src/lvmutils.cpp" />
+
+		<!-- Luau.CodeGen -->
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/AssemblyBuilderA64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/AssemblyBuilderX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/BytecodeAnalysis.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/BytecodeSummary.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/CodeAllocator.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/CodeBlockUnwind.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/CodeGen.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/CodeGenA64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/CodeGenAssembly.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/CodeGenContext.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/CodeGenUtils.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/CodeGenX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/EmitBuiltinsX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/EmitCommonX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/EmitInstructionX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrAnalysis.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrBuilder.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrCallWrapperX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrDump.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrLoweringA64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrLoweringX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrRegAllocA64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrRegAllocX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrTranslateBuiltins.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrTranslation.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrUtils.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/IrValueLocationTracking.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/lcodegen.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/NativeProtoExecData.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/NativeState.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/OptimizeConstProp.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/OptimizeDeadStore.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/OptimizeFinalX64.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/SharedCodeAllocator.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/UnwindBuilderDwarf2.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/UnwindBuilderWin.cpp" />
+	</files>
+
 	<target id="haxe">
-		<flag value="-fstack-protector" if="mingw" />
-
-		<section if="windows">
-			<lib name="${haxelib:hxluau}/project/luau/lib/Windows/x64/luau.lib" if="HXCPP_M64" unless="HXCPP_ARM64" />
-			<lib name="${haxelib:hxluau}/project/luau/lib/Windows/arm64/luau.lib" if="HXCPP_ARM64" />
-		</section>
-
-		<section if="macos">
-			<lib name="${haxelib:hxluau}/project/luau/lib/MacOS/x64/libluau.a" if="HXCPP_M64" unless="HXCPP_ARM64" />
-			<lib name="${haxelib:hxluau}/project/luau/lib/MacOS/arm64/libluau.a" if="HXCPP_ARM64" />
-		</section>
-
-		<section if="linux">
-			<lib name="${haxelib:hxluau}/project/luau/lib/Linux/x64/libluau.a" if="HXCPP_M64" unless="HXCPP_ARM64" />
-			<lib name="${haxelib:hxluau}/project/luau/lib/Linux/arm64/libluau.a" if="HXCPP_ARM64" />
-			<lib name="${haxelib:hxluau}/project/luau/lib/Linux/armv7/libluau.a" if="HXCPP_ARMV7" />
-			<lib name="${haxelib:hxluau}/project/luau/lib/Linux/x86/libluau.a" unless="HXCPP_M64 || HXCPP_ARM64 || HXCPP_ARMV7" />
-		</section>
-
-		<section if="android">
-			<lib name="${haxelib:hxluau}/project/luau/lib/Android/libluau-arm64.a" if="HXCPP_ARM64" />
-			<lib name="${haxelib:hxluau}/project/luau/lib/Android/libluau-armv7a.a" if="HXCPP_ARMV7" />
-			<lib name="${haxelib:hxluau}/project/luau/lib/Android/libluau-x86.a" if="HXCPP_X86" />
-			<lib name="${haxelib:hxluau}/project/luau/lib/Android/libluau-x86_64.a" if="HXCPP_X86_64" />
-		</section>
-
-		<section if="iphoneos" unless="simulator">
-			<lib name="${haxelib:hxluau}/project/luau/lib/iOS/libluau_device.a" if="HXCPP_ARM64" />
-		</section>
-
-		<section if="iphoneos simulator">
-			<lib name="${haxelib:hxluau}/project/luau/lib/iOS/libluau_sim.a" if="HXCPP_ARM64 || HXCPP_M64" />
-		</section>
+		<files id="luau" />
 	</target>
 </xml>

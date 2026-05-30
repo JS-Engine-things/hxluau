@@ -1,0 +1,4 @@
+[submodule "project/lib/luau"]
+	path = project/lib/luau
+	url = https://github.com/luau-lang/luau
+	depth = 1
