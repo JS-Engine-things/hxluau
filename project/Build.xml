@@ -183,6 +183,11 @@
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
 		<compilerflag value="-DFFI_LITTLE_ENDIAN" />
 		<compilerflag value="-DFFI_STATIC_BUILD" />
+		<section unless="HXCPP_CPP20">
+			<compilerflag value="/std:c++17" if="windows" unless="mingw" />
+			<compilerflag value="-std=c++17" unless="windows" />
+			<compilerflag value="-std=c++17" if="mingw" />
+		</section>
 
 		<file name="${haxelib:hxluau}/project/lib/cffi/src/main.cc" />
 		<file name="${haxelib:hxluau}/project/lib/cffi/src/lua.cc" />
@@ -216,11 +221,19 @@
 		<file name="${haxelib:hxluau}/project/lib/libffi/src/arm/ffi.c" />
 
 		<section unless="isMsvc">
-			<file name="${haxelib:hxluau}/project/lib/libffi/src/x86/sysv.S" />
-			<file name="${haxelib:hxluau}/project/lib/libffi/src/x86/unix64.S" />
-			<file name="${haxelib:hxluau}/project/lib/libffi/src/x86/win64.S" />
-			<file name="${haxelib:hxluau}/project/lib/libffi/src/aarch64/sysv.S" />
-			<file name="${haxelib:hxluau}/project/lib/libffi/src/arm/sysv.S" />
+			<section unless="HXCPP_M64 || HXCPP_ARM64 || HXCPP_ARMV7 || HXCPP_ARMV7S">
+				<file name="${haxelib:hxluau}/project/lib/libffi/src/x86/sysv.S" />
+			</section>
+			<section if="HXCPP_M64">
+				<file name="${haxelib:hxluau}/project/lib/libffi/src/x86/unix64.S" />
+				<file name="${haxelib:hxluau}/project/lib/libffi/src/x86/win64.S" />
+			</section>
+			<section if="HXCPP_ARM64">
+				<file name="${haxelib:hxluau}/project/lib/libffi/src/aarch64/sysv.S" />
+			</section>
+			<section if="HXCPP_ARMV7 || HXCPP_ARMV7S">
+				<file name="${haxelib:hxluau}/project/lib/libffi/src/arm/sysv.S" />
+			</section>
 		</section>
 
 		<section if="isMsvc">
