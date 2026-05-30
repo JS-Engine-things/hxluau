@@ -195,6 +195,7 @@
 	</files>
 
 	<files id="libffi">
+		<assembler name="${haxelib:hxluau}/project/ml64wrap.cmd" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
 		<compilerflag value="-DFFI_BUILDING" />
@@ -220,6 +221,18 @@
 			<file name="${haxelib:hxluau}/project/lib/libffi/src/x86/win64.S" />
 			<file name="${haxelib:hxluau}/project/lib/libffi/src/aarch64/sysv.S" />
 			<file name="${haxelib:hxluau}/project/lib/libffi/src/arm/sysv.S" />
+		</section>
+
+		<section if="isMsvc">
+			<section if="HXCPP_M64" unless="HXCPP_ARM64">
+				<file name="${haxelib:hxluau}/project/lib/custom/libffi/asm/win64.asm" />
+			</section>
+			<!--<section unless="HXCPP_M64 || HXCPP_ARM64">
+				<file name="${haxelib:hxluau}/project/lib/custom/libffi/asm/win32.asm" />
+			</section>-->
+			<section if="HXCPP_ARM64">
+				<file name="${haxelib:hxluau}/project/lib/custom/libffi/asm/win64_armasm.asm" />
+			</section>
 		</section>
 
 	</files>
