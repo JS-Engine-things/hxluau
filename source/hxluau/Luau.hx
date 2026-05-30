@@ -176,4 +176,13 @@ extern class Luau
 	 */
 	@:native("hxluau_counter_support_enabled")
 	static function counterSupportEnabled():Int;
+
+	/**
+	 * Opens the cffi-luau library (libffi-based C FFI) into the given Lua state.
+	 *
+	 * @param L The Lua state.
+	 * @return 1 (the cffi module table is left on the stack).
+	 */
+	@:native('hxluau_open_cffi')
+	static function openCFFI(L:cpp.RawPointer<Lua_State>):Int;
 }

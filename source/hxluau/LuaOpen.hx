@@ -3,6 +3,7 @@ package hxluau;
 #if !cpp
 #error 'Luau supports only C++ target platforms.'
 #end
+import hxluau.Luau;
 import hxluau.Types;
 
 /**
@@ -11,6 +12,7 @@ import hxluau.Types;
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
 @:include('lualib.h')
+@:include('LuauImpl.h')
 @:unreflective
 extern class LuaOpen
 {
@@ -130,4 +132,21 @@ extern class LuaOpen
 	 */
 	@:native('luaopen_integer')
 	static function integer(L:cpp.RawPointer<Lua_State>):Int;
+
+	/**
+	 * Opens the cffi-luau library into the given Lua state.
+	 * Leaves the `cffi` module table on top of the stack.
+	 * Register it globally with:
+	 * ```
+	 * LuaOpen.cffi(vm);
+	 * Lua.setglobal(vm, "ffi");
+	 * ```
+	 *
+	 * @param L The Lua state.
+	 * @return 1 (the cffi module table is left on the stack).
+	 */
+	inline static function cffi(L:cpp.RawPointer<Lua_State>):Int
+	{
+		return Luau.openCFFI(L);
+	}
 }

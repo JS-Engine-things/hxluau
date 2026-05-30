@@ -534,6 +534,14 @@ int hxluau_counter_support_enabled()
     return g_counter_support_enabled ? 1 : 0;
 }
 
+// Open the cffi-luau library (C FFI) — wraps extern "C" luaopen_cffi
+extern "C" int luaopen_cffi(lua_State* L);
+
+int hxluau_open_cffi(lua_State* L)
+{
+    return luaopen_cffi(L);
+}
+
 } // extern "C"
 
 // -----------------------------

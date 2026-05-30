@@ -49,6 +49,9 @@ void hxluau_set_compile_mutable_globals(const char* const* mutableGlobals);
 void hxluau_set_compile_userdata_types(const char* const* userdataTypes);
 void hxluau_set_compile_disabled_builtins(const char* const* disabledBuiltins);
 
+// Open the cffi-luau library (wraps extern "C" luaopen_cffi)
+int hxluau_open_cffi(lua_State* L);
+
 // Version information (update when vendored Luau library changes)
 const char* hxluau_version_string();
 const char* hxluau_version_release();

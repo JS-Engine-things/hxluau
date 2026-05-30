@@ -2,3 +2,11 @@
 	path = project/lib/luau
 	url = https://github.com/luau-lang/luau
 	depth = 1
+[submodule "project/lib/cffi"]
+	path = project/lib/cffi
+	url = https://github.com/ShadowEngineTeam/cffi-luau
+	depth = 1
+[submodule "project/lib/libffi"]
+	path = project/lib/libffi
+	url = https://github.com/libffi/libffi.git
+	depth = 1
