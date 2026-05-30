@@ -20,10 +20,11 @@ goto parse
 :run
 set "asm=ml64.exe"
 if not "!file!"=="" (
-    echo !file! | findstr /i "armasm\|arm64" >nul
-    if not errorlevel 1 set "asm=armasm64.exe"
-    echo !file! | findstr /i "win32" >nul
-    if not errorlevel 1 set "asm=ml.exe"
+    echo !file! | findstr /i "armasm arm64" >nul
+    if not errorlevel 1 (set "asm=armasm64.exe") else (
+        echo !file! | findstr /i "win32" >nul
+        if not errorlevel 1 set "asm=ml.exe"
+    )
 )
 
 rem Default by system arch if no file detected
