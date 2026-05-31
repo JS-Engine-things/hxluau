@@ -539,7 +539,26 @@ extern "C" int luaopen_cffi(lua_State* L);
 
 int hxluau_open_cffi(lua_State* L)
 {
-    return luaopen_cffi(L);
+    int n = luaopen_cffi(L);
+    luaL_checktype(L, -1, LUA_TTABLE); // ensure cffi pushed its table
+    (void)n;
+
+    lua_getfield(L, -1, "load");
+
+#if defined(_WIN32)
+    lua_pushstring(L, "msvcrt");
+#elif defined(__ANDROID__)
+    lua_pushstring(L, "libc.so");
+#elif defined(__linux__)
+    lua_pushstring(L, "libc.so.6");
+#elif defined(__MACH__)
+    lua_pushstring(L, "libSystem.dylib");
+#endif
+
+    lua_call(L, 1, 1);
+    lua_setfield(L, -2, "C");
+
+    return 1;
 }
 
 } // extern "C"
