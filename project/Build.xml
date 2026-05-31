@@ -11,6 +11,7 @@
 			<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
 		</section>
 		<compilerflag value="-I${haxelib:hxluau}/project/include" />
+		<compilerflag value="-DHXLUAU_DISABLE_FFI" if="HXLUAU_DISABLE_FFI" />
 
 		<file name="${haxelib:hxluau}/project/src/LuauImpl.cpp" />
 	</files>
