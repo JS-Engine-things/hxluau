@@ -458,7 +458,7 @@ e4:
 ffi_closure_raw_SYSV ENDP
 
 	ALIGN	16
-ffi_closure_raw_THISCALL PROC 
+ffi_closure_raw_THISCALL PROC C
 	pop	edx
 	push	ecx
 	push	edx
