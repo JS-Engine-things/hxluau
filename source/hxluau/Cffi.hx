@@ -36,7 +36,9 @@ extern class Cffi
 	 */
 	inline static function register(L:cpp.RawPointer<Lua_State>):Void
 	{
+		#if !HXLUAU_DISABLE_FFI
 		LuaOpen.cffi(L);
 		Lua.setglobal(L, "ffi");
+		#end
 	}
 }

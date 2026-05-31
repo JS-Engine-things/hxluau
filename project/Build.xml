@@ -5,9 +5,11 @@
 	<files id="haxe">
 		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source being messy -->
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
+		<section unless="HXLUAU_DISABLE_FFI">
+			<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
+			<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
+			<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
+		</section>
 		<compilerflag value="-I${haxelib:hxluau}/project/include" />
 
 		<file name="${haxelib:hxluau}/project/src/LuauImpl.cpp" />
@@ -16,9 +18,11 @@
 	<files id="__main__">
 		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source being messy -->
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
+		<section unless="HXLUAU_DISABLE_FFI">
+			<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
+			<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
+			<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
+		</section>
 		<compilerflag value="-I${haxelib:hxluau}/project/include" />
 	</files>
 
@@ -210,8 +214,10 @@
 	</files>
 
 	<target id="haxe">
-		<files id="libffi" />
-		<files id="luau-cffi" />
+		<section unless="HXLUAU_DISABLE_FFI">
+			<files id="libffi" />
+			<files id="luau-cffi" />
+		</section>
 		<files id="luau" />
 	</target>
 </xml>

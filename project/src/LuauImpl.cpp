@@ -535,6 +535,18 @@ int hxluau_counter_support_enabled()
 }
 
 // Open the cffi-luau library (C FFI) — wraps extern "C" luaopen_cffi
+#ifdef HXLUAU_DISABLE_FFI
+
+// FFI was compiled out (HXLUAU_DISABLE_FFI). The symbol is kept so the Haxe
+// binding still links, but it raises a Lua error instead of opening cffi.
+int hxluau_open_cffi(lua_State* L)
+{
+    luaL_error(L, "hxluau: FFI support was disabled at build time (HXLUAU_DISABLE_FFI)");
+    return 0;
+}
+
+#else
+
 extern "C" int luaopen_cffi(lua_State* L);
 
 int hxluau_open_cffi(lua_State* L)
@@ -560,6 +572,8 @@ int hxluau_open_cffi(lua_State* L)
 
     return 1;
 }
+
+#endif // HXLUAU_DISABLE_FFI
 
 } // extern "C"
 

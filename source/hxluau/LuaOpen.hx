@@ -133,6 +133,7 @@ extern class LuaOpen
 	@:native('luaopen_integer')
 	static function integer(L:cpp.RawPointer<Lua_State>):Int;
 
+	#if !HXLUAU_DISABLE_FFI
 	/**
 	 * Opens the cffi-luau library into the given Lua state.
 	 * Leaves the `cffi` module table on top of the stack.
@@ -149,4 +150,5 @@ extern class LuaOpen
 	{
 		return Luau.openCFFI(L);
 	}
+	#end
 }
