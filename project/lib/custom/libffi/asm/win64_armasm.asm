@@ -2260,4 +2260,3 @@ compress_hfa_type_store_q3
 	LEAF_END	compress_hfa_type
 
 	END
-PS C:\Users\Homura\GitHub\FNF-Shadow-Engine\.haxelib\hxluau\git> 

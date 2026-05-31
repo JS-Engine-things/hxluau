@@ -1,530 +1,550 @@
-OPTION PROLOGUE:NONE, EPILOGUE:NONE
-.MODEL FLAT
+	.686P
+	.MODEL	FLAT
+	OPTION	PROLOGUE:NONE
+	OPTION	EPILOGUE:NONE
 
-; Constants from ffi.h / internal.h
-FFI_TRAMPOLINE_SIZE    equ 12
-X86_RET_TYPE_MASK      equ 15
-X86_RET_POP_SHIFT      equ 4
-closure_FS             equ 44
-closure_CF             equ 0
+FFI_TRAMPOLINE_SIZE	equ	16
 
-X86_RET_FLOAT          equ 0
-X86_RET_DOUBLE         equ 1
-X86_RET_LDOUBLE        equ 2
-X86_RET_SINT8          equ 3
-X86_RET_SINT16         equ 4
-X86_RET_UINT8          equ 5
-X86_RET_UINT16         equ 6
-X86_RET_INT64          equ 7
-X86_RET_INT32          equ 8
-X86_RET_VOID           equ 9
-X86_RET_STRUCTPOP      equ 10
-X86_RET_STRUCTARG      equ 11
-X86_RET_STRUCT_1B      equ 12
-X86_RET_STRUCT_2B      equ 13
-X86_RET_UNUSED14       equ 14
-X86_RET_UNUSED15       equ 15
+X86_RET_TYPE_MASK	equ	15
+X86_RET_POP_SHIFT	equ	4
 
-R_EAX                  equ 0
-R_EDX                  equ 1
-R_ECX                  equ 2
+R_EAX			equ	0
+R_EDX			equ	1
+R_ECX			equ	2
 
-X86_TRAMP_MAP_SIZE     equ 4096
-X86_TRAMP_SIZE         equ 32
-raw_closure_S_FS       equ 44
-raw_closure_T_FS       equ 40
+; HAVE_FASTCALL: closure_FS = 40 + 4, closure_CF = 0
+closure_FS		equ	(40 + 4)
+closure_CF		equ	0
 
-EXTERN ffi_closure_inner : PROC
+raw_closure_S_FS	equ	(16 + 16 + 12)	; 44
+raw_closure_T_FS	equ	(16 + 16 + 8)	; 40
 
-PUBLIC ffi_call_i386
-PUBLIC ffi_go_closure_EAX
-PUBLIC ffi_go_closure_ECX
-PUBLIC ffi_closure_i386
-PUBLIC ffi_go_closure_STDCALL
-PUBLIC ffi_closure_STDCALL
-PUBLIC ffi_closure_REGISTER
-PUBLIC ffi_closure_raw_SYSV
-PUBLIC ffi_closure_raw_THISCALL
-PUBLIC trampoline_code_table
+	EXTRN	@ffi_closure_inner@8:PROC
 
-; =========================================================================
-; ffi_call_i386(struct call_frame *frame, char *argp) __fastcall
-; ecx = frame, edx = argp
-; =========================================================================
-ffi_call_i386 PROC
-    mov     eax, [esp]
-    mov     [ecx+0], ebp
-    mov     [ecx+4], eax
-    mov     ebp, ecx
-    mov     esp, edx
-    mov     eax, [ebp+20+R_EAX*4]
-    mov     edx, [ebp+20+R_EDX*4]
-    mov     ecx, [ebp+20+R_ECX*4]
-    call    [ebp+8]
-    mov     ecx, [ebp+12]
-    mov     [ebp+8], ebx
-    and     ecx, X86_RET_TYPE_MASK
-    lea     ebx, [store_table + ecx*8]
-    mov     ecx, [ebp+16]
-    jmp     ebx
+	PUBLIC	@ffi_call_i386@8
+	PUBLIC	ffi_go_closure_EAX
+	PUBLIC	ffi_go_closure_ECX
+	PUBLIC	ffi_closure_i386
+	PUBLIC	ffi_go_closure_STDCALL
+	PUBLIC	ffi_closure_REGISTER
+	PUBLIC	ffi_closure_STDCALL
+	PUBLIC	ffi_closure_raw_SYSV
+	PUBLIC	ffi_closure_raw_THISCALL
 
-ALIGN 8
+FFI_CLOSURE_SAVE_REGS MACRO
+	mov	[esp + closure_CF + 16 + R_EAX*4], eax
+	mov	[esp + closure_CF + 16 + R_EDX*4], edx
+	mov	[esp + closure_CF + 16 + R_ECX*4], ecx
+ENDM
+
+FFI_CLOSURE_COPY_TRAMP_DATA MACRO
+	mov	edx, [eax + FFI_TRAMPOLINE_SIZE]	; copy cif
+	mov	ecx, [eax + FFI_TRAMPOLINE_SIZE + 4]	; copy fun
+	mov	eax, [eax + FFI_TRAMPOLINE_SIZE + 8]	; copy user_data
+	mov	[esp + closure_CF + 28], edx
+	mov	[esp + closure_CF + 32], ecx
+	mov	[esp + closure_CF + 36], eax
+ENDM
+
+FFI_CLOSURE_PREP_CALL MACRO
+	mov	ecx, esp			; load closure_data
+	lea	edx, [esp + closure_FS + 4]	; load incoming stack
+ENDM
+
+FFI_CLOSURE_CALL_INNER MACRO
+	call	@ffi_closure_inner@8
+ENDM
+
+FFI_CLOSURE_MASK_AND_JUMP MACRO TBL
+	and	eax, X86_RET_TYPE_MASK
+	lea	edx, [TBL + eax*8]
+	mov	eax, [esp + closure_CF]		; optimistic load
+	jmp	edx
+ENDM
+
+	.CODE
+	ALIGN	16
+@ffi_call_i386@8 PROC
+	mov	eax, [esp]			; move the return address
+	mov	[ecx], ebp			; store ebp into local frame
+	mov	[ecx + 4], eax			; store retaddr into local frame
+	mov	ebp, ecx			; new frame based off ebp
+
+	mov	esp, edx			; set outgoing argument stack
+	mov	eax, [ebp + 20 + R_EAX*4]	; set register arguments
+	mov	edx, [ebp + 20 + R_EDX*4]
+	mov	ecx, [ebp + 20 + R_ECX*4]
+
+	call	DWORD PTR [ebp + 8]
+
+	mov	ecx, [ebp + 12]			; load return type code
+	mov	[ebp + 8], ebx			; preserve ebx
+
+	and	ecx, X86_RET_TYPE_MASK
+	lea	ebx, [store_table + ecx*8]
+	mov	ecx, [ebp + 16]			; load result address
+	jmp	ebx
+
+	ALIGN	8
 store_table:
-ALIGN 8
-    fstp    dword ptr [ecx]
-    jmp     e1
-ALIGN 8
-    fstp    qword ptr [ecx]
-    jmp     e1
-ALIGN 8
-    fstp    tbyte ptr [ecx]
-    jmp     e1
-ALIGN 8
-    movsx   eax, al
-    mov     [ecx], eax
-    jmp     e1
-ALIGN 8
-    movsx   eax, ax
-    mov     [ecx], eax
-    jmp     e1
-ALIGN 8
-    movzx   eax, al
-    mov     [ecx], eax
-    jmp     e1
-ALIGN 8
-    movzx   eax, ax
-    mov     [ecx], eax
-    jmp     e1
-ALIGN 8
-    mov     [ecx+4], edx
-    mov     [ecx], eax
-    jmp     e1
-ALIGN 8
-    mov     [ecx], eax
-    jmp     e1
-ALIGN 8
+	; 0: X86_RET_FLOAT
+	fstp	DWORD PTR [ecx]
+	jmp	SHORT e1
+	ALIGN	8
+	; 1: X86_RET_DOUBLE
+	fstp	QWORD PTR [ecx]
+	jmp	SHORT e1
+	ALIGN	8
+	; 2: X86_RET_LDOUBLE
+	fstp	QWORD PTR [ecx]
+	jmp	SHORT e1
+	ALIGN	8
+	; 3: X86_RET_SINT8
+	movsx	eax, al
+	mov	[ecx], eax
+	jmp	SHORT e1
+	ALIGN	8
+	; 4: X86_RET_SINT16
+	movsx	eax, ax
+	mov	[ecx], eax
+	jmp	SHORT e1
+	ALIGN	8
+	; 5: X86_RET_UINT8
+	movzx	eax, al
+	mov	[ecx], eax
+	jmp	SHORT e1
+	ALIGN	8
+	; 6: X86_RET_UINT16
+	movzx	eax, ax
+	mov	[ecx], eax
+	jmp	SHORT e1
+	ALIGN	8
+	; 7: X86_RET_INT64
+	mov	[ecx + 4], edx
+	; fallthru
+	ALIGN	8
+	; 8: X86_RET_INT32
+	mov	[ecx], eax
+	; fallthru
+	ALIGN	8
+	; 9: X86_RET_VOID
 e1:
-    mov     ebx, [ebp+8]
-    mov     esp, ebp
-    pop     ebp
-    ret
+	mov	ebx, [ebp + 8]
+	mov	esp, ebp
+	pop	ebp
+	ret
+	ALIGN	8
+	; 10: X86_RET_STRUCTPOP
+	jmp	SHORT e1
+	ALIGN	8
+	; 11: X86_RET_STRUCTARG
+	jmp	SHORT e1
+	ALIGN	8
+	; 12: X86_RET_STRUCT_1B
+	mov	[ecx], al
+	jmp	SHORT e1
+	ALIGN	8
+	; 13: X86_RET_STRUCT_2B
+	mov	[ecx], ax
+	jmp	SHORT e1
+	ALIGN	8
+	; 14: X86_RET_UNUSED14
+	ud2
+	ALIGN	8
+	; 15: X86_RET_UNUSED15
+	ud2
+@ffi_call_i386@8 ENDP
 
-ALIGN 8
-    jmp     e1
-ALIGN 8
-    jmp     e1
-ALIGN 8
-    mov     [ecx], al
-    jmp     e1
-ALIGN 8
-    mov     [ecx], ax
-    jmp     e1
-
-ALIGN 8
-    ud2
-ALIGN 8
-    ud2
-ffi_call_i386 ENDP
-
-; =========================================================================
-; ffi_go_closure_EAX
-; =========================================================================
-ffi_go_closure_EAX PROC
-    sub     esp, closure_FS
-    mov     [esp+16+R_EAX*4], eax
-    mov     [esp+16+R_EDX*4], edx
-    mov     [esp+16+R_ECX*4], ecx
-    mov     edx, [eax+4]
-    mov     ecx, [eax+8]
-    mov     [esp+28], edx
-    mov     [esp+32], ecx
-    mov     [esp+36], eax
-    jmp     do_closure_i386
+	ALIGN	16
+ffi_go_closure_EAX PROC C
+	sub	esp, closure_FS
+	FFI_CLOSURE_SAVE_REGS
+	mov	edx, [eax + 4]			; copy cif
+	mov	ecx, [eax + 8]			; copy fun
+	mov	[esp + closure_CF + 28], edx
+	mov	[esp + closure_CF + 32], ecx
+	mov	[esp + closure_CF + 36], eax	; closure is user_data
+	jmp	do_closure_i386
 ffi_go_closure_EAX ENDP
 
-; =========================================================================
-; ffi_go_closure_ECX
-; =========================================================================
-ffi_go_closure_ECX PROC
-    sub     esp, closure_FS
-    mov     [esp+16+R_EAX*4], eax
-    mov     [esp+16+R_EDX*4], edx
-    mov     [esp+16+R_ECX*4], ecx
-    mov     edx, [ecx+4]
-    mov     eax, [ecx+8]
-    mov     [esp+28], edx
-    mov     [esp+32], eax
-    mov     [esp+36], ecx
-    jmp     do_closure_i386
+	ALIGN	16
+ffi_go_closure_ECX PROC C
+	sub	esp, closure_FS
+	FFI_CLOSURE_SAVE_REGS
+	mov	edx, [ecx + 4]			; copy cif
+	mov	eax, [ecx + 8]			; copy fun
+	mov	[esp + closure_CF + 28], edx
+	mov	[esp + closure_CF + 32], eax
+	mov	[esp + closure_CF + 36], ecx	; closure is user_data
+	jmp	do_closure_i386
 ffi_go_closure_ECX ENDP
 
-; =========================================================================
-; ffi_closure_i386
-; =========================================================================
-ffi_closure_i386 PROC
-    sub     esp, closure_FS
-    mov     [esp+16+R_EAX*4], eax
-    mov     [esp+16+R_EDX*4], edx
-    mov     [esp+16+R_ECX*4], ecx
-    mov     edx, [eax+FFI_TRAMPOLINE_SIZE]
-    mov     ecx, [eax+FFI_TRAMPOLINE_SIZE+4]
-    mov     eax, [eax+FFI_TRAMPOLINE_SIZE+8]
-    mov     [esp+28], edx
-    mov     [esp+32], ecx
-    mov     [esp+36], eax
+	ALIGN	16
+ffi_closure_i386 PROC C
+	sub	esp, closure_FS
+	FFI_CLOSURE_SAVE_REGS
+	FFI_CLOSURE_COPY_TRAMP_DATA
 
-do_closure_i386:
-    mov     ecx, esp
-    lea     edx, [esp+closure_FS+4]
-    call    ffi_closure_inner
-    and     eax, X86_RET_TYPE_MASK
-    mov     eax, [esp+0]
-    lea     edx, [load_table2 + eax*8]
-    jmp     edx
+do_closure_i386::
+	FFI_CLOSURE_PREP_CALL
+	FFI_CLOSURE_CALL_INNER
+	FFI_CLOSURE_MASK_AND_JUMP load_table2
 
-ALIGN 8
+	ALIGN	8
 load_table2:
-ALIGN 8
-    fld     dword ptr [esp+0]
-    jmp     e2
-ALIGN 8
-    fld     qword ptr [esp+0]
-    jmp     e2
-ALIGN 8
-    fld     tbyte ptr [esp+0]
-    jmp     e2
-ALIGN 8
-    movsx   eax, al
-    jmp     e2
-ALIGN 8
-    movsx   eax, ax
-    jmp     e2
-ALIGN 8
-    movzx   eax, al
-    jmp     e2
-ALIGN 8
-    movzx   eax, ax
-    jmp     e2
-ALIGN 8
-    mov     edx, [esp+4]
-    jmp     e2
-ALIGN 8
-    jmp     e2
-ALIGN 8
+	; 0: X86_RET_FLOAT
+	fld	DWORD PTR [esp + closure_CF]
+	jmp	SHORT e2
+	ALIGN	8
+	; 1: X86_RET_DOUBLE
+	fld	QWORD PTR [esp + closure_CF]
+	jmp	SHORT e2
+	ALIGN	8
+	; 2: X86_RET_LDOUBLE
+	fld	QWORD PTR [esp + closure_CF]
+	jmp	SHORT e2
+	ALIGN	8
+	; 3: X86_RET_SINT8
+	movsx	eax, al
+	jmp	SHORT e2
+	ALIGN	8
+	; 4: X86_RET_SINT16
+	movsx	eax, ax
+	jmp	SHORT e2
+	ALIGN	8
+	; 5: X86_RET_UINT8
+	movzx	eax, al
+	jmp	SHORT e2
+	ALIGN	8
+	; 6: X86_RET_UINT16
+	movzx	eax, ax
+	jmp	SHORT e2
+	ALIGN	8
+	; 7: X86_RET_INT64
+	mov	edx, [esp + closure_CF + 4]
+	jmp	SHORT e2
+	ALIGN	8
+	; 8: X86_RET_INT32
+	nop
+	; fallthru
+	ALIGN	8
+	; 9: X86_RET_VOID
 e2:
-    add     esp, closure_FS
-    ret
-
-ALIGN 8
-    add     esp, closure_FS
-    ret     4
-ALIGN 8
-    jmp     e2
-ALIGN 8
-    movzx   eax, al
-    jmp     e2
-ALIGN 8
-    movzx   eax, ax
-    jmp     e2
-
-ALIGN 8
-    ud2
-ALIGN 8
-    ud2
+	add	esp, closure_FS
+	ret
+	ALIGN	8
+	; 10: X86_RET_STRUCTPOP
+	add	esp, closure_FS
+	ret	4
+	ALIGN	8
+	; 11: X86_RET_STRUCTARG
+	jmp	SHORT e2
+	ALIGN	8
+	; 12: X86_RET_STRUCT_1B
+	movzx	eax, al
+	jmp	SHORT e2
+	ALIGN	8
+	; 13: X86_RET_STRUCT_2B
+	movzx	eax, ax
+	jmp	SHORT e2
+	ALIGN	8
+	; 14: X86_RET_UNUSED14
+	ud2
+	ALIGN	8
+	; 15: X86_RET_UNUSED15
+	ud2
 ffi_closure_i386 ENDP
 
-; =========================================================================
-; ffi_go_closure_STDCALL
-; =========================================================================
-ffi_go_closure_STDCALL PROC
-    sub     esp, closure_FS
-    mov     [esp+16+R_EAX*4], eax
-    mov     [esp+16+R_EDX*4], edx
-    mov     [esp+16+R_ECX*4], ecx
-    mov     edx, [ecx+4]
-    mov     eax, [ecx+8]
-    mov     [esp+28], edx
-    mov     [esp+32], eax
-    mov     [esp+36], ecx
-    jmp     do_closure_STDCALL
+	ALIGN	16
+ffi_go_closure_STDCALL PROC C
+	sub	esp, closure_FS
+	FFI_CLOSURE_SAVE_REGS
+	mov	edx, [ecx + 4]			; copy cif
+	mov	eax, [ecx + 8]			; copy fun
+	mov	[esp + closure_CF + 28], edx
+	mov	[esp + closure_CF + 32], eax
+	mov	[esp + closure_CF + 36], ecx	; closure is user_data
+	jmp	do_closure_STDCALL
 ffi_go_closure_STDCALL ENDP
 
-; =========================================================================
-; ffi_closure_REGISTER
-; =========================================================================
-ffi_closure_REGISTER PROC
-    sub     esp, closure_FS-4
-    mov     [esp+16+R_EAX*4], eax
-    mov     [esp+16+R_EDX*4], edx
-    mov     [esp+16+R_ECX*4], ecx
-    mov     eax, [esp+closure_FS-4]
-    jmp     do_closure_REGISTER
+	ALIGN	16
+ffi_closure_REGISTER PROC C
+	sub	esp, closure_FS - 4
+	FFI_CLOSURE_SAVE_REGS
+	mov	eax, [esp + closure_FS - 4]	; load closure
+	jmp	do_closure_REGISTER
 ffi_closure_REGISTER ENDP
 
-; =========================================================================
-; ffi_closure_STDCALL
-; =========================================================================
-ffi_closure_STDCALL PROC
-    sub     esp, closure_FS
-    mov     [esp+16+R_EAX*4], eax
-    mov     [esp+16+R_EDX*4], edx
-    mov     [esp+16+R_ECX*4], ecx
+	ALIGN	16
+ffi_closure_STDCALL PROC C
+	sub	esp, closure_FS
+	FFI_CLOSURE_SAVE_REGS
 
-do_closure_REGISTER:
-    mov     edx, [eax+FFI_TRAMPOLINE_SIZE]
-    mov     ecx, [eax+FFI_TRAMPOLINE_SIZE+4]
-    mov     eax, [eax+FFI_TRAMPOLINE_SIZE+8]
-    mov     [esp+28], edx
-    mov     [esp+32], ecx
-    mov     [esp+36], eax
+do_closure_REGISTER::
+	FFI_CLOSURE_COPY_TRAMP_DATA
 
-do_closure_STDCALL:
-    mov     ecx, esp
-    lea     edx, [esp+closure_FS+4]
-    call    ffi_closure_inner
+do_closure_STDCALL::
+	FFI_CLOSURE_PREP_CALL
+	FFI_CLOSURE_CALL_INNER
 
-    mov     ecx, eax
-    shr     ecx, X86_RET_POP_SHIFT
-    lea     ecx, [esp+closure_FS+ecx]
-    mov     edx, [esp+closure_FS]
-    mov     [ecx], edx
+	mov	ecx, eax
+	shr	ecx, X86_RET_POP_SHIFT		; isolate pop count
+	lea	ecx, [esp + closure_FS + ecx]	; compute popped esp
+	mov	edx, [esp + closure_FS]		; move return address
+	mov	[ecx], edx
 
-    and     eax, X86_RET_TYPE_MASK
-    mov     eax, [esp+0]
-    lea     edx, [load_table3 + eax*8]
-    jmp     edx
+	FFI_CLOSURE_MASK_AND_JUMP load_table3
 
-ALIGN 8
+	ALIGN	8
 load_table3:
-ALIGN 8
-    fld     dword ptr [esp+0]
-    mov     esp, ecx
-    ret
-ALIGN 8
-    fld     qword ptr [esp+0]
-    mov     esp, ecx
-    ret
-ALIGN 8
-    fld     tbyte ptr [esp+0]
-    mov     esp, ecx
-    ret
-ALIGN 8
-    movsx   eax, al
-    mov     esp, ecx
-    ret
-ALIGN 8
-    movsx   eax, ax
-    mov     esp, ecx
-    ret
-ALIGN 8
-    movzx   eax, al
-    mov     esp, ecx
-    ret
-ALIGN 8
-    movzx   eax, ax
-    mov     esp, ecx
-    ret
-ALIGN 8
-    mov     edx, [esp+4]
-    mov     esp, ecx
-    ret
-ALIGN 8
-    mov     esp, ecx
-    ret
-ALIGN 8
-    mov     esp, ecx
-    ret
-ALIGN 8
-    mov     esp, ecx
-    ret
-ALIGN 8
-    mov     esp, ecx
-    ret
-ALIGN 8
-    movzx   eax, al
-    mov     esp, ecx
-    ret
-ALIGN 8
-    movzx   eax, ax
-    mov     esp, ecx
-    ret
-
-ALIGN 8
-    ud2
-ALIGN 8
-    ud2
+	; 0: X86_RET_FLOAT
+	fld	DWORD PTR [esp + closure_CF]
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 1: X86_RET_DOUBLE
+	fld	QWORD PTR [esp + closure_CF]
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 2: X86_RET_LDOUBLE
+	fld	QWORD PTR [esp + closure_CF]
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 3: X86_RET_SINT8
+	movsx	eax, al
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 4: X86_RET_SINT16
+	movsx	eax, ax
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 5: X86_RET_UINT8
+	movzx	eax, al
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 6: X86_RET_UINT16
+	movzx	eax, ax
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 7: X86_RET_INT64
+	mov	edx, [esp + closure_CF + 4]
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 8: X86_RET_INT32
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 9: X86_RET_VOID
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 10: X86_RET_STRUCTPOP
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 11: X86_RET_STRUCTARG
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 12: X86_RET_STRUCT_1B
+	movzx	eax, al
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 13: X86_RET_STRUCT_2B
+	movzx	eax, ax
+	mov	esp, ecx
+	ret
+	ALIGN	8
+	; 14: X86_RET_UNUSED14
+	ud2
+	ALIGN	8
+	; 15: X86_RET_UNUSED15
+	ud2
 ffi_closure_STDCALL ENDP
 
-; =========================================================================
-; ffi_closure_raw_SYSV
-; =========================================================================
-ffi_closure_raw_SYSV PROC
-    sub     esp, raw_closure_S_FS
-    mov     [esp+raw_closure_S_FS-4], ebx
+	ALIGN	16
+ffi_closure_raw_SYSV PROC C
+	sub	esp, raw_closure_S_FS
+	mov	[esp + raw_closure_S_FS - 4], ebx
 
-    mov     edx, [eax+FFI_TRAMPOLINE_SIZE+8]
-    mov     [esp+12], edx
-    lea     edx, [esp+raw_closure_S_FS+4]
-    mov     [esp+8], edx
-    lea     edx, [esp+16]
-    mov     [esp+4], edx
-    mov     ebx, [eax+FFI_TRAMPOLINE_SIZE]
-    mov     [esp], ebx
-    call    [eax+FFI_TRAMPOLINE_SIZE+4]
+	mov	edx, [eax + FFI_TRAMPOLINE_SIZE + 8]	; load cl->user_data
+	mov	[esp + 12], edx
+	lea	edx, [esp + raw_closure_S_FS + 4]	; load raw_args
+	mov	[esp + 8], edx
+	lea	edx, [esp + 16]				; load &res
+	mov	[esp + 4], edx
+	mov	ebx, [eax + FFI_TRAMPOLINE_SIZE]	; load cl->cif
+	mov	[esp], ebx
+	call	DWORD PTR [eax + FFI_TRAMPOLINE_SIZE + 4]	; call cl->fun
 
-    mov     eax, [ebx+20]
-    and     eax, X86_RET_TYPE_MASK
-    lea     ecx, [load_table4 + eax*8]
-    mov     ebx, [esp+raw_closure_S_FS-4]
-    mov     eax, [esp+16]
-    jmp     ecx
+	mov	eax, [ebx + 20]				; load cif->flags
+	and	eax, X86_RET_TYPE_MASK
+	lea	ecx, [load_table4 + eax*8]
+	mov	ebx, [esp + raw_closure_S_FS - 4]
+	mov	eax, [esp + 16]				; optimistic load
+	jmp	ecx
 
-ALIGN 8
+	ALIGN	8
 load_table4:
-ALIGN 8
-    fld     dword ptr [esp+16]
-    jmp     e4
-ALIGN 8
-    fld     qword ptr [esp+16]
-    jmp     e4
-ALIGN 8
-    fld     tbyte ptr [esp+16]
-    jmp     e4
-ALIGN 8
-    movsx   eax, al
-    jmp     e4
-ALIGN 8
-    movsx   eax, ax
-    jmp     e4
-ALIGN 8
-    movzx   eax, al
-    jmp     e4
-ALIGN 8
-    movzx   eax, ax
-    jmp     e4
-ALIGN 8
-    mov     edx, [esp+20]
-    jmp     e4
-ALIGN 8
-    jmp     e4
-ALIGN 8
+	; 0: X86_RET_FLOAT
+	fld	DWORD PTR [esp + 16]
+	jmp	SHORT e4
+	ALIGN	8
+	; 1: X86_RET_DOUBLE
+	fld	QWORD PTR [esp + 16]
+	jmp	SHORT e4
+	ALIGN	8
+	; 2: X86_RET_LDOUBLE
+	fld	QWORD PTR [esp + 16]
+	jmp	SHORT e4
+	ALIGN	8
+	; 3: X86_RET_SINT8
+	movsx	eax, al
+	jmp	SHORT e4
+	ALIGN	8
+	; 4: X86_RET_SINT16
+	movsx	eax, ax
+	jmp	SHORT e4
+	ALIGN	8
+	; 5: X86_RET_UINT8
+	movzx	eax, al
+	jmp	SHORT e4
+	ALIGN	8
+	; 6: X86_RET_UINT16
+	movzx	eax, ax
+	jmp	SHORT e4
+	ALIGN	8
+	; 7: X86_RET_INT64
+	mov	edx, [esp + 16 + 4]
+	jmp	SHORT e4
+	ALIGN	8
+	; 8: X86_RET_INT32
+	nop
+	; fallthru
+	ALIGN	8
+	; 9: X86_RET_VOID
 e4:
-    add     esp, raw_closure_S_FS
-    ret
-
-ALIGN 8
-    add     esp, raw_closure_S_FS
-    ret     4
-ALIGN 8
-    jmp     e4
-ALIGN 8
-    movzx   eax, al
-    jmp     e4
-ALIGN 8
-    movzx   eax, ax
-    jmp     e4
-
-ALIGN 8
-    ud2
-ALIGN 8
-    ud2
+	add	esp, raw_closure_S_FS
+	ret
+	ALIGN	8
+	; 10: X86_RET_STRUCTPOP
+	add	esp, raw_closure_S_FS
+	ret	4
+	ALIGN	8
+	; 11: X86_RET_STRUCTARG
+	jmp	SHORT e4
+	ALIGN	8
+	; 12: X86_RET_STRUCT_1B
+	movzx	eax, al
+	jmp	SHORT e4
+	ALIGN	8
+	; 13: X86_RET_STRUCT_2B
+	movzx	eax, ax
+	jmp	SHORT e4
+	ALIGN	8
+	; 14: X86_RET_UNUSED14
+	ud2
+	ALIGN	8
+	; 15: X86_RET_UNUSED15
+	ud2
 ffi_closure_raw_SYSV ENDP
 
-; =========================================================================
-; ffi_closure_raw_THISCALL
-; =========================================================================
-ffi_closure_raw_THISCALL PROC
-    pop     edx
-    push    ecx
-    push    edx
-    sub     esp, raw_closure_T_FS
-    mov     [esp+raw_closure_T_FS-4], ebx
+	ALIGN	16
+ffi_closure_raw_THISCALL PROC 
+	pop	edx
+	push	ecx
+	push	edx
+	sub	esp, raw_closure_T_FS
+	mov	[esp + raw_closure_T_FS - 4], ebx
 
-    mov     edx, [eax+FFI_TRAMPOLINE_SIZE+8]
-    mov     [esp+12], edx
-    lea     edx, [esp+raw_closure_T_FS+4]
-    mov     [esp+8], edx
-    lea     edx, [esp+16]
-    mov     [esp+4], edx
-    mov     ebx, [eax+FFI_TRAMPOLINE_SIZE]
-    mov     [esp], ebx
-    call    [eax+FFI_TRAMPOLINE_SIZE+4]
+	mov	edx, [eax + FFI_TRAMPOLINE_SIZE + 8]	; load cl->user_data
+	mov	[esp + 12], edx
+	lea	edx, [esp + raw_closure_T_FS + 4]	; load raw_args
+	mov	[esp + 8], edx
+	lea	edx, [esp + 16]				; load &res
+	mov	[esp + 4], edx
+	mov	ebx, [eax + FFI_TRAMPOLINE_SIZE]	; load cl->cif
+	mov	[esp], ebx
+	call	DWORD PTR [eax + FFI_TRAMPOLINE_SIZE + 4]	; call cl->fun
 
-    mov     eax, [ebx+20]
-    and     eax, X86_RET_TYPE_MASK
-    lea     ecx, [load_table5 + eax*8]
-    mov     ebx, [esp+raw_closure_T_FS-4]
-    mov     eax, [esp+16]
-    jmp     ecx
+	mov	eax, [ebx + 20]				; load cif->flags
+	and	eax, X86_RET_TYPE_MASK
+	lea	ecx, [load_table5 + eax*8]
+	mov	ebx, [esp + raw_closure_T_FS - 4]
+	mov	eax, [esp + 16]				; optimistic load
+	jmp	ecx
 
-ALIGN 8
+	ALIGN	8
 load_table5:
-ALIGN 8
-    fld     dword ptr [esp+16]
-    jmp     e5
-ALIGN 8
-    fld     qword ptr [esp+16]
-    jmp     e5
-ALIGN 8
-    fld     tbyte ptr [esp+16]
-    jmp     e5
-ALIGN 8
-    movsx   eax, al
-    jmp     e5
-ALIGN 8
-    movsx   eax, ax
-    jmp     e5
-ALIGN 8
-    movzx   eax, al
-    jmp     e5
-ALIGN 8
-    movzx   eax, ax
-    jmp     e5
-ALIGN 8
-    mov     edx, [esp+20]
-    jmp     e5
-ALIGN 8
-    jmp     e5
-ALIGN 8
+	; 0: X86_RET_FLOAT
+	fld	DWORD PTR [esp + 16]
+	jmp	SHORT e5
+	ALIGN	8
+	; 1: X86_RET_DOUBLE
+	fld	QWORD PTR [esp + 16]
+	jmp	SHORT e5
+	ALIGN	8
+	; 2: X86_RET_LDOUBLE
+	fld	QWORD PTR [esp + 16]
+	jmp	SHORT e5
+	ALIGN	8
+	; 3: X86_RET_SINT8
+	movsx	eax, al
+	jmp	SHORT e5
+	ALIGN	8
+	; 4: X86_RET_SINT16
+	movsx	eax, ax
+	jmp	SHORT e5
+	ALIGN	8
+	; 5: X86_RET_UINT8
+	movzx	eax, al
+	jmp	SHORT e5
+	ALIGN	8
+	; 6: X86_RET_UINT16
+	movzx	eax, ax
+	jmp	SHORT e5
+	ALIGN	8
+	; 7: X86_RET_INT64
+	mov	edx, [esp + 16 + 4]
+	jmp	SHORT e5
+	ALIGN	8
+	; 8: X86_RET_INT32
+	nop
+	; fallthru
+	ALIGN	8
+	; 9: X86_RET_VOID
 e5:
-    add     esp, raw_closure_T_FS
-    ret     4
-
-ALIGN 8
-    add     esp, raw_closure_T_FS
-    ret     8
-ALIGN 8
-    jmp     e5
-ALIGN 8
-    movzx   eax, al
-    jmp     e5
-ALIGN 8
-    movzx   eax, ax
-    jmp     e5
-
-ALIGN 8
-    ud2
-ALIGN 8
-    ud2
+	add	esp, raw_closure_T_FS
+	ret	4
+	ALIGN	8
+	; 10: X86_RET_STRUCTPOP
+	add	esp, raw_closure_T_FS
+	ret	8
+	ALIGN	8
+	; 11: X86_RET_STRUCTARG
+	jmp	SHORT e5
+	ALIGN	8
+	; 12: X86_RET_STRUCT_1B
+	movzx	eax, al
+	jmp	SHORT e5
+	ALIGN	8
+	; 13: X86_RET_STRUCT_2B
+	movzx	eax, ax
+	jmp	SHORT e5
+	ALIGN	8
+	; 14: X86_RET_UNUSED14
+	ud2
+	ALIGN	8
+	; 15: X86_RET_UNUSED15
+	ud2
 ffi_closure_raw_THISCALL ENDP
 
-; =========================================================================
-; Trampoline code table
-; =========================================================================
-trampoline_code_table PROC
-    REPT X86_TRAMP_MAP_SIZE / X86_TRAMP_SIZE
-    sub     esp, 8
-    mov     [esp], eax
-    call    $+5
-    pop     eax
-    mov     eax, [eax+4081]
-    mov     [esp+4], eax
-    call    $+5
-    pop     eax
-    mov     eax, [eax+4070]
-    jmp     eax
-    ALIGN 4
-    ENDM
-trampoline_code_table ENDP
-
-END
+	END
