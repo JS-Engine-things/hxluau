@@ -152,7 +152,7 @@
 		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/UnwindBuilderWin.cpp" />
 	</files>
 
-	<files id="cffi">
+	<files id="luau-cffi">
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
@@ -229,7 +229,7 @@
 
 	<target id="haxe">
 		<files id="libffi" />
-		<files id="cffi" />
+		<files id="luau-cffi" />
 		<files id="luau" />
 	</target>
 </xml>
