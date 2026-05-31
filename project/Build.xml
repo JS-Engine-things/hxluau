@@ -44,11 +44,6 @@
 		<compilerflag value="-D_CRT_SECURE_NO_WARNINGS" if="windows" unless="mingw" />
 		<compilerflag value="-fno-math-errno" unless="windows" />
 		<compilerflag value="-fno-math-errno" if="mingw" />
-		<section unless="HXCPP_CPP20">
-			<compilerflag value="/std:c++17" if="windows" unless="mingw" />
-			<compilerflag value="-std=c++17" unless="windows" />
-			<compilerflag value="-std=c++17" if="mingw" />
-		</section>
 
 		<!-- Luau.Common -->
 		<file name="${haxelib:hxluau}/project/lib/luau/Common/src/BytecodeWire.cpp" />
@@ -169,11 +164,6 @@
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
 		<compilerflag value="-DFFI_LITTLE_ENDIAN" />
 		<compilerflag value="-DFFI_STATIC_BUILD" />
-		<section unless="HXCPP_CPP20">
-			<compilerflag value="/std:c++17" if="windows" unless="mingw" />
-			<compilerflag value="-std=c++17" unless="windows" />
-			<compilerflag value="-std=c++17" if="mingw" />
-		</section>
 
 		<file name="${haxelib:hxluau}/project/lib/cffi/src/main.cc" />
 		<file name="${haxelib:hxluau}/project/lib/cffi/src/lua.cc" />
