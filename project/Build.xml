@@ -25,6 +25,7 @@
 	<files id="luau">
 		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/src" />
 
 		<!--<compilerflag value="-D_CRT_SECURE_NO_WARNINGS" if="windows" unless="mingw" />-->
 		<compilerflag value="-fno-math-errno" unless="windows" />
