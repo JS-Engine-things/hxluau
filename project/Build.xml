@@ -41,7 +41,7 @@
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/src" />
 
-		<compilerflag value="-D_CRT_SECURE_NO_WARNINGS" if="windows" unless="mingw" />
+		<!--<compilerflag value="-D_CRT_SECURE_NO_WARNINGS" if="windows" unless="mingw" />-->
 		<compilerflag value="-fno-math-errno" unless="windows" />
 		<compilerflag value="-fno-math-errno" if="mingw" />
 
