@@ -3,43 +3,28 @@
 	<pragma once="true" />
 
 	<files id="haxe">
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/include" />
+		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
+		<compilerflag value="-I${haxelib:hxluau}/project/include" />
 
 		<file name="${haxelib:hxluau}/project/src/LuauImpl.cpp" />
 	</files>
 
 	<files id="__main__">
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/include" />
+		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
+		<compilerflag value="-I${haxelib:hxluau}/project/include" />
 	</files>
 
 	<files id="luau">
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/src" />
+		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 
 		<!--<compilerflag value="-D_CRT_SECURE_NO_WARNINGS" if="windows" unless="mingw" />-->
 		<compilerflag value="-fno-math-errno" unless="windows" />
@@ -153,15 +138,11 @@
 	</files>
 
 	<files id="luau-cffi">
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
+		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Common/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Ast/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Bytecode/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Compiler/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/CodeGen/include" />
-		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/include" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/cffi/src" />
 		<compilerflag value="-DFFI_LITTLE_ENDIAN" />
 		<compilerflag value="-DFFI_STATIC_BUILD" />
 
