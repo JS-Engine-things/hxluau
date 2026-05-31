@@ -227,11 +227,11 @@
 			<section if="HXCPP_M64" unless="HXCPP_ARM64">
 				<file name="${haxelib:hxluau}/project/lib/custom/libffi/asm/win64.asm" />
 			</section>
-			<!--<section unless="HXCPP_M64 || HXCPP_ARM64">
-				<file name="${haxelib:hxluau}/project/lib/custom/libffi/asm/win32.asm" />
-			</section>-->
 			<section if="HXCPP_ARM64">
 				<file name="${haxelib:hxluau}/project/lib/custom/libffi/asm/win64_armasm.asm" />
+			</section>
+			<section unless="HXCPP_M64 || HXCPP_ARM64">
+				<file name="${haxelib:hxluau}/project/lib/custom/libffi/asm/win32.asm" />
 			</section>
 		</section>
 
