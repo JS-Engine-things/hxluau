@@ -8,8 +8,8 @@ set "file="
 if "%~1"=="" goto run
 set "a=%~1"
 set "matched="
-if /i "!a:~0,3!"=="/Fo" set "matched=1"&set "fo=!a!"
-if /i "!a:~0,3!"=="-Fo" set "matched=1"&set "fo=!a!"
+if /i "!a:~0,3!"=="/Fo" set "matched=1"&set "fo=!a:~3!"
+if /i "!a:~0,3!"=="-Fo" set "matched=1"&set "fo=!a:~3!"
 if not defined matched (
     set "rest=!rest! !a!"
     if /i "!a:~-4!"==".asm" set "file=!a!"
@@ -34,13 +34,15 @@ if "!file!"=="" (
     if /i "%PROCESSOR_ARCHITECTURE%"=="ARM64" set "asm=armasm64.exe"
 )
 
-set "cmd="
 if /i "!asm!"=="armasm64.exe" (
-    if not "!fo!"=="" set "cmd=-nologo -o !fo:~3! !rest!"
+    rem Only pass what armasm64 needs: input and output paths
+    set "cmd=-nologo"
+    if not "!fo!"=="" set "cmd=!cmd! -o !fo!"
+    set "cmd=!cmd! !file!"
 ) else (
     set "cmd=/c /nologo"
-    if not "!fo!"=="" set "cmd=/c /nologo !fo! !rest!"
+    if not "!fo!"=="" set "cmd=!cmd! /Fo!fo!"
+    set "cmd=!cmd! !rest!"
 )
-if "!cmd!"=="" set "cmd=!rest!"
 
 %asm% !cmd!
