@@ -3,7 +3,7 @@
 	<pragma once="true" />
 
 	<files id="haxe">
-		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
+		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source being messy -->
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
@@ -14,7 +14,7 @@
 	</files>
 
 	<files id="__main__">
-		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
+		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source being messy -->
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
@@ -23,7 +23,7 @@
 	</files>
 
 	<files id="luau">
-		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
+		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source being messy -->
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/src" />
 
@@ -139,7 +139,7 @@
 	</files>
 
 	<files id="luau-cffi">
-		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source is messy -->
+		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source being messy -->
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/libffi/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/libffi/src" />
