@@ -36,6 +36,8 @@
 		<compilerflag value="-fno-math-errno" unless="windows" />
 		<compilerflag value="-fno-math-errno" if="mingw" />
 
+		<compilerflag value="-DLUA_USE_LONGJMP=1" />
+
 		<!-- Luau.Common -->
 		<file name="${haxelib:hxluau}/project/lib/luau/Common/src/BytecodeWire.cpp" />
 		<file name="${haxelib:hxluau}/project/lib/luau/Common/src/StringUtils.cpp" />
