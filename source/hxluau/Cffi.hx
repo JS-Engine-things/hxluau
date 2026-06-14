@@ -6,17 +6,14 @@ package hxluau;
 import hxluau.Types;
 
 /**
- * Convenient access to cffi-luau, a libffi-based C FFI for Luau.
+ * libffi-based C FFI for Luau, with a LuaJIT-style API.
  *
- * Usage mirrors LuaJIT's FFI. After opening the library into a Lua state,
- * Luau scripts can call `ffi.cdef`, `ffi.new`, `ffi.load`, etc. exactly
- * as they would in LuaJIT.
- *
- * Example from Haxe:
+ * Once registered, Luau scripts use `ffi.cdef`, `ffi.new`, `ffi.load`, etc.
+ * exactly as in LuaJIT.
  * ```
  * var vm = LuaL.newstate();
  * LuaL.openlibs(vm);
- * Cffi.register(vm);                   // opens cffi, sets global 'ffi'
+ * Cffi.register(vm);                   // opens cffi as the global `ffi`
  * LuaL.dostring(vm, 'local p = ffi.new("int[4]")');
  * ```
  */
@@ -28,11 +25,8 @@ import hxluau.Types;
 extern class Cffi
 {
 	/**
-	 * Opens the cffi library and registers it as the global `ffi`.
-	 * After calling this, Luau scripts can use `ffi.cdef`, `ffi.new`,
-	 * `ffi.load`, and all other LuaJIT FFI-compatible functions.
-	 *
-	 * @param L The Lua state.
+	 * Opens cffi and registers it as the global `ffi`.
+	 * @param L Lua state.
 	 */
 	inline static function register(L:cpp.RawPointer<Lua_State>):Void
 	{

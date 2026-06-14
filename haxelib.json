@@ -8,8 +8,8 @@
 		"haxe"
 	],
 	"description": "Haxe/hxcpp @:native bindings for Luau.",
-	"version": "1.1.0",
-	"releasenote": "Update to Luau 0.722 (release/710). Add LUA_TCLASS and LUA_TOBJECT type constants. Add lua_getcoverage() for code coverage tracking. Add callback types for profiling.",
+	"version": "1.2.1",
+	"releasenote": "Update to Luau 0.725 and made comments more clear.",
 	"contributors": [
 		"HomuHomu833"
 	],

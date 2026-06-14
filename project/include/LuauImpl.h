@@ -7,30 +7,30 @@
 extern "C" {
 #endif
 
-// Wrapper for luaL_loadstring functionality using Luau
+// Compiles and loads a string via Luau, like luaL_loadstring.
 int hxluau_loadstring_wrapper(lua_State* L, const char* s);
 
-// Wrapper for luaL_loadfile functionality using Luau
+// Compiles and loads a file via Luau, like luaL_loadfile.
 int hxluau_loadfile_wrapper(lua_State* L, const char* filename);
 
-// Wrapper for luaL_dostring functionality
+// Compiles and runs a string, like luaL_dostring.
 int hxluau_dostring_wrapper(lua_State* L, const char* str);
 
-// Wrapper for luaL_dofile functionality
+// Compiles and runs a file, like luaL_dofile.
 int hxluau_dofile_wrapper(lua_State* L, const char* filename);
 
-// Register a custom print implementation into global 'print'
+// Install a custom print as the global 'print'.
 void hxluau_register_print(lua_State* L);
 
 // Bytecode cache control
 void hxluau_bytecode_cache_clear();
 void hxluau_bytecode_cache_set_capacity(int cap);
 
-// VM soft reset: collect & reset main thread without destroying VM
+// VM soft reset. Collects garbage and resets the main thread without destroying the VM.
 void hxluau_vm_soft_reset(lua_State* L);
 
-// Enable/disable Luau native codegen (ahead-of-time) for loaded chunks
-// 0 = disable, non-zero = enable
+// Enable or disable Luau native codegen (ahead-of-time) for loaded chunks.
+// 0 disables, non-zero enables.
 void hxluau_enable_codegen(int enable);
 
 // Configure global compile options used by luau_compile
@@ -48,6 +48,10 @@ void hxluau_set_compile_vector_ctor(const char* ctor);
 void hxluau_set_compile_mutable_globals(const char* const* mutableGlobals);
 void hxluau_set_compile_userdata_types(const char* const* userdataTypes);
 void hxluau_set_compile_disabled_builtins(const char* const* disabledBuiltins);
+
+// Codegen counter recording intent (see LuauImpl.cpp for details)
+void hxluau_enable_counter_support(int enable);
+int hxluau_counter_support_enabled();
 
 // Open the cffi-luau library (wraps extern "C" luaopen_cffi)
 int hxluau_open_cffi(lua_State* L);

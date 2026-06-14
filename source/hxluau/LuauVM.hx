@@ -5,10 +5,7 @@ package hxluau;
 #end
 import hxluau.Types;
 
-/**
- * Provides access to various properties and functionalities of Luau.
- * This class contains Luau-specific extensions that are not part of the standard Lua API.
- */
+/** Luau-specific bytecode compilation, loading, and native codegen (not part of the standard Lua API). */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
 @:include('luacode.h')
@@ -17,104 +14,102 @@ import hxluau.Types;
 extern class LuauVM
 {
 	/**
-	 * Compile a string of Lua source code into bytecode for execution by Luau VM.
+	 * Compiles Lua source into Luau bytecode.
 	 *
-	 * When compilation fails, the returned buffer holds the encoded error and
-	 * still loads via `load` (which then reports the error). The buffer is
-	 * heap-allocated and must be released with `free` (e.g. `cpp.Stdlib.free`).
+	 * On failure the buffer holds the encoded error and still loads via `load`,
+	 * which then reports it. The buffer is heap-allocated; free it with `free`
+	 * (e.g. `cpp.Stdlib.free`).
 	 *
-	 * @param source The Lua source code to compile.
-	 * @param size The size of the source code string.
-	 * @param options Compilation options (pass null for compiler defaults).
-	 * @param bytecodeSize Pointer to store the size of the resulting bytecode.
-	 * @return A pointer to the compiled bytecode, or null on out-of-memory.
+	 * @param source Lua source code.
+	 * @param size Length of `source`.
+	 * @param options Compile options, or null for defaults.
+	 * @param bytecodeSize Receives the bytecode length.
+	 * @return The bytecode, or null on out-of-memory.
 	 */
 	@:native('luau_compile')
 	static function compile(source:cpp.ConstCharStar, size:cpp.SizeT, options:cpp.RawPointer<Lua_CompileOptions>, bytecodeSize:cpp.Star<cpp.SizeT>):cpp.RawPointer<cpp.Char>;
 
 	/**
-	 * Load a precompiled Luau chunk into the Lua state.
-	 *
-	 * @param L The Lua state.
-	 * @param chunkname The name of the chunk.
+	 * Loads precompiled bytecode into the state.
+	 * @param L Lua state.
+	 * @param chunkname Chunk name (for error and debug messages).
 	 * @param bytecode The compiled bytecode.
-	 * @param bytecodeSize The size of the bytecode.
-	 * @param env The environment index (0 for default).
-	 * @return 0 on success, or an error code on failure.
+	 * @param bytecodeSize Length of `bytecode`.
+	 * @param env Environment index (0 for default).
+	 * @return 0 on success, or an error code.
 	 */
 	@:native('luau_load')
 	static function load(L:cpp.RawPointer<Lua_State>, chunkname:cpp.ConstCharStar, bytecode:cpp.ConstCharStar, bytecodeSize:cpp.SizeT, env:Int):Int;
 
 	/**
-	 * Returns 1 if Luau native code generator is supported on this platform, 0 otherwise.
+	 * Whether native codegen is supported on this platform.
+	 * @return 1 if supported, 0 otherwise.
 	 */
 	@:native('luau_codegen_supported')
 	static function codegen_supported():Int;
 
 	/**
-	 * Creates a code generator instance bound to the given state. Must check support first.
-	 *
-	 * @param L The Lua state.
+	 * Creates a codegen instance bound to the state (check support first).
+	 * @param L Lua state.
 	 */
 	@:native('luau_codegen_create')
 	static function codegen_create(L:cpp.RawPointer<Lua_State>):Void;
 
 	/**
-	 * Builds native code for target function (and inner functions) at stack index `idx`.
-	 *
-	 * @param L The Lua state.
-	 * @param idx Stack index of the function to compile.
+	 * Compiles the function at `idx` (and its inner functions) to native code.
+	 * @param L Lua state.
+	 * @param idx Stack index of the function.
 	 */
 	@:native('luau_codegen_compile')
 	static function codegen_compile(L:cpp.RawPointer<Lua_State>, idx:Int):Void;
 
 	/**
-	 * Set a nil constant value in the compile constant struct.
-	 * @param constant Pointer to the compile constant to set.
+	 * Sets a compile constant to nil.
+	 * @param constant The compile constant to set.
 	 */
 	@:native('luau_set_compile_constant_nil')
 	static function compileConstantNil(constant:cpp.RawPointer<cpp.Void>):Void;
 
 	/**
-	 * Set a boolean constant value in the compile constant struct.
-	 * @param constant Pointer to the compile constant to set.
+	 * Sets a compile constant to a boolean.
+	 * @param constant The compile constant to set.
 	 * @param b The boolean value.
 	 */
 	@:native('luau_set_compile_constant_boolean')
 	static function compileConstantBoolean(constant:cpp.RawPointer<cpp.Void>, b:Int):Void;
 
 	/**
-	 * Set a number constant value in the compile constant struct.
-	 * @param constant Pointer to the compile constant to set.
+	 * Sets a compile constant to a number.
+	 * @param constant The compile constant to set.
 	 * @param n The number value.
 	 */
 	@:native('luau_set_compile_constant_number')
 	static function compileConstantNumber(constant:cpp.RawPointer<cpp.Void>, n:Lua_Number):Void;
 
 	/**
-	 * Set a 64-bit integer constant value in the compile constant struct.
-	 * @param constant Pointer to the compile constant to set.
-	 * @param l The 64-bit integer value.
+	 * Sets a compile constant to a 64-bit integer.
+	 * @param constant The compile constant to set.
+	 * @param l The integer value.
 	 */
 	@:native('luau_set_compile_constant_integer64')
 	static function compileConstantInteger64(constant:cpp.RawPointer<cpp.Void>, l:haxe.Int64):Void;
 
 	/**
-	 * Set a vector constant value in the compile constant struct.
-	 * @param constant Pointer to the compile constant to set.
-	 * @param x The x component.
-	 * @param y The y component.
-	 * @param z The z component.
-	 * @param w The w component.
+	 * Sets a compile constant to a vector.
+	 * @param constant The compile constant to set.
+	 * @param x X component.
+	 * @param y Y component.
+	 * @param z Z component.
+	 * @param w W component.
 	 */
 	@:native('luau_set_compile_constant_vector')
 	static function compileConstantVector(constant:cpp.RawPointer<cpp.Void>, x:Float, y:Float, z:Float, w:Float):Void;
 
 	/**
-	 * Set a string constant value in the compile constant struct.
-	 * @param constant Pointer to the compile constant to set.
+	 * Sets a compile constant to a string.
+	 * @param constant The compile constant to set.
 	 * @param s The string value.
-	 * @param l The string length.
+	 * @param l Length of `s`.
 	 */
 	@:native('luau_set_compile_constant_string')
 	static function compileConstantString(constant:cpp.RawPointer<cpp.Void>, s:cpp.ConstCharStar, l:cpp.SizeT):Void;

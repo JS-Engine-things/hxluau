@@ -86,7 +86,7 @@ class CstExprConstantString : public CstNode
 public:
     LUAU_CST_RTTI(CstExprConstantString)
 
-    enum QuoteStyle
+    enum class QuoteStyle
     {
         QuotedSingle,
         QuotedDouble,
@@ -159,7 +159,7 @@ class CstExprTable : public CstNode
 public:
     LUAU_CST_RTTI(CstExprTable)
 
-    enum Separator
+    enum class Separator
     {
         Comma,
         Semicolon,
@@ -422,7 +422,7 @@ public:
 
     struct Item
     {
-        enum struct Kind
+        enum class Kind
         {
             Indexer,
             Property,

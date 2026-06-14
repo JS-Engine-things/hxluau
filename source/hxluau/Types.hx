@@ -1,16 +1,12 @@
 package hxluau;
 
-/**
- * Dummy class for importing Luau types.
- */
+/** Placeholder so Luau types can be imported; holds no members. */
 #if !cpp
 #error 'Luau supports only C++ target platforms.'
 #end
 class Types {}
 
-/**
- * Lua state type, representing the entire execution context of a Lua interpreter.
- */
+/** A Lua interpreter state (`lua_State`) holding the whole execution context. */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
 @:include('lualib.h')
@@ -18,43 +14,29 @@ class Types {}
 @:native('lua_State')
 extern class Lua_State {}
 
-/**
- * Type for C functions registered with Lua.
- */
+/** A C function callable from Lua. Returns the number of results it pushed. */
 typedef Lua_CFunction = cpp.Callable<(L:cpp.RawPointer<Lua_State>) -> Int>;
 
-/**
- * Type for Lua continuation functions.
- */
+/** Continuation run after a yield, resuming a C function. */
 typedef Lua_Continuation = cpp.Callable<(L:cpp.RawPointer<Lua_State>, status:Int) -> Int>;
 
-/**
- * Type for memory allocation functions.
- */
+/** Realloc-style memory allocator. An `nsize` of 0 frees `ptr`. Returns the new block. */
 typedef Lua_Alloc = cpp.Callable<(ud:cpp.RawPointer<cpp.Void>, ptr:cpp.RawPointer<cpp.Void>, osize:cpp.SizeT, nsize:cpp.SizeT) -> cpp.RawPointer<cpp.Void>>;
 
-/**
- * Opaque compile-constant type used by luacode callbacks.
- */
+/** Opaque compile-constant handle passed to luacode callbacks. */
 typedef Lua_CompileConstant = cpp.RawPointer<cpp.Void>;
 
-/**
- * Callback that returns a type identifier for a known library member.
- */
+/** Returns a type id for a known library member, used during compilation. */
 typedef Lua_LibraryMemberTypeCallback = cpp.Callable<(library:cpp.ConstCharStar, member:cpp.ConstCharStar) -> Int>;
 
-/**
- * Callback that fills a known constant value for a library member.
- */
+/** Fills a constant value for a known library member, used during compilation. */
 typedef Lua_LibraryMemberConstantCallback = cpp.Callable<(library:cpp.ConstCharStar, member:cpp.ConstCharStar, constant:cpp.RawPointer<Lua_CompileConstant>) -> Void>;
 
 /**
- * Options controlling how `LuauVM.compile` turns source into bytecode.
- * Mirrors the C `lua_CompileOptions` struct from `luacode.h`.
+ * Options for `LuauVM.compile` (mirrors C `lua_CompileOptions`).
  *
- * A freshly allocated struct leaves every field zero/null; set only what you
- * need before passing a pointer to `LuauVM.compile`. Passing `null` to the
- * compiler uses its built-in defaults (optimizationLevel=1, debugLevel=1).
+ * A fresh struct is all-zero, so set only the fields you need. Passing `null`
+ * to the compiler uses its defaults (optimizationLevel 1 and debugLevel 1).
  */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('luacode.h')
@@ -63,85 +45,50 @@ typedef Lua_LibraryMemberConstantCallback = cpp.Callable<(library:cpp.ConstCharS
 @:native('lua_CompileOptions')
 extern class Lua_CompileOptions
 {
-	/**
-	 * Allocates a new Lua_CompileOptions instance.
-	 */
+	/** Allocates a new instance. */
 	function new():Void;
 
-	/**
-	 * Optimization level: 0 = none, 1 = baseline (keeps debuggability),
-	 * 2 = aggressive (inlining; harms debuggability). Default 1.
-	 */
+	/** 0 for none, 1 for baseline (debuggable), 2 for aggressive (inlining). Default 1. */
 	var optimizationLevel:Int;
 
-	/**
-	 * Debug info level: 0 = none, 1 = line info & function names,
-	 * 2 = full local & upvalue names. Default 1.
-	 */
+	/** 0 for none, 1 for lines and function names, 2 for local and upvalue names. Default 1. */
 	var debugLevel:Int;
 
-	/**
-	 * Type info level: 0 = native modules only, 1 = all modules. Default 0.
-	 */
+	/** 0 for native modules only, 1 for all modules. Default 0. */
 	var typeInfoLevel:Int;
 
-	/**
-	 * Coverage level: 0 = none, 1 = statement, 2 = statement + expression. Default 0.
-	 */
+	/** 0 for none, 1 for statement, 2 for statement and expression. Default 0. */
 	var coverageLevel:Int;
 
-	/**
-	 * Alternative global builtin used to construct vectors (in addition to the
-	 * default `vector.create`), or null.
-	 */
+	/** Extra global builtin for constructing vectors, or null. */
 	var vectorLib:cpp.ConstCharStar;
 
-	/**
-	 * Alternative vector constructor name, or null.
-	 */
+	/** Alternative vector constructor name, or null. */
 	var vectorCtor:cpp.ConstCharStar;
 
-	/**
-	 * Alternative vector type name for type tables, or null.
-	 */
+	/** Alternative vector type name for type tables, or null. */
 	var vectorType:cpp.ConstCharStar;
 
-	/**
-	 * Null-terminated array of globals that are mutable (disables the import
-	 * optimization for their fields), or null.
-	 */
+	/** Null-terminated list of mutable globals (disables import optimization for their fields), or null. */
 	var mutableGlobals:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>;
 
-	/**
-	 * Null-terminated array of userdata type names included in type information, or null.
-	 */
+	/** Null-terminated list of userdata type names included in type info, or null. */
 	var userdataTypes:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>;
 
-	/**
-	 * Null-terminated array of library globals with known members, or null.
-	 */
+	/** Null-terminated list of library globals with known members, or null. */
 	var librariesWithKnownMembers:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>;
 
-	/**
-	 * Callback returning a type id for a known library member, or null.
-	 */
+	/** Callback returning a type id for a known library member, or null. */
 	var libraryMemberTypeCb:Lua_LibraryMemberTypeCallback;
 
-	/**
-	 * Callback filling a constant value for a known library member, or null.
-	 */
+	/** Callback filling a constant for a known library member, or null. */
 	var libraryMemberConstantCb:Lua_LibraryMemberConstantCallback;
 
-	/**
-	 * Null-terminated array of builtins excluded from fastcall
-	 * ("name" or "lib.name"), or null.
-	 */
+	/** Null-terminated list of builtins excluded from fastcall ("name" or "lib.name"), or null. */
 	var disabledBuiltins:cpp.RawPointer<cpp.RawConstPointer<cpp.Char>>;
 }
 
-/**
- * Type for numbers in Lua.
- */
+/** Lua floating-point number type (`lua_Number`). */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
 @:native('lua_Number')
@@ -150,9 +97,7 @@ extern class Lua_CompileOptions
 @:notNull
 extern abstract Lua_Number from Float to Float {}
 
-/**
- * Type for integers in Lua.
- */
+/** Lua integer type (`lua_Integer`). */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
 @:native('lua_Integer')
@@ -161,9 +106,7 @@ extern abstract Lua_Number from Float to Float {}
 @:notNull
 extern abstract Lua_Integer from Int to Int {}
 
-/**
- * Lua debug information.
- */
+/** Activation record describing a function or call frame (`lua_Debug`). */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
 @:unreflective
@@ -171,104 +114,65 @@ extern abstract Lua_Integer from Int to Int {}
 @:native('lua_Debug')
 extern class Lua_Debug
 {
-	/**
-	 * Allocates a new Lua_Debug instance.
-	 */
+	/** Allocates a new instance. */
 	function new():Void;
 
-	/**
-	 * Name of the current function.
-	 */
+	/** Function name, if known. */
 	var name:cpp.ConstCharStar;
 
-	/**
-	 * Source type ('Lua', 'C', etc.).
-	 */
+	/** Source kind ("Lua", "C", etc.). */
 	var what:cpp.ConstCharStar;
 
-	/**
-	 * Source of the chunk.
-	 */
+	/** Chunk source. */
 	var source:cpp.ConstCharStar;
 
-	/**
-	 * Current line where the call is.
-	 */
-	var currentline:Int;
-
-	/**
-	 * Number of upvalues.
-	 */
-	var nupvals:cpp.UInt8;
-
-	/**
-	 * Number of parameters.
-	 */
-	var nparams:cpp.UInt8;
-
-	/**
-	 * Line where the function was defined.
-	 */
-	var linedefined:Int;
-
-	/**
-	 * Function source summary.
-	 */
+	/** Short, printable source description. */
 	var short_src:cpp.ConstCharStar;
 
-	/**
-	 * 1 if function is vararg, 0 otherwise.
-	 */
+	/** Line where the function is defined. */
+	var linedefined:Int;
+
+	/** Current line being executed. */
+	var currentline:Int;
+
+	/** Number of upvalues. */
+	var nupvals:cpp.UInt8;
+
+	/** Number of parameters. */
+	var nparams:cpp.UInt8;
+
+	/** 1 if the function is vararg, 0 otherwise. */
 	var isvararg:cpp.Int8;
 
-	/**
-	 * User data pointer used by Luau debug callbacks.
-	 */
+	/** User pointer for Luau debug callbacks. */
 	var userdata:cpp.RawPointer<cpp.Void>;
 }
 
-/**
- * Functions called by the debugger on specific events.
- */
+/** Debug hook invoked on specific VM events. */
 typedef Lua_Hook = cpp.Callable<(L:cpp.RawPointer<Lua_State>, ar:cpp.RawPointer<Lua_Debug>) -> Void>;
 
-/**
- * Destructor callback for userdata types (lua_Destructor).
- */
+/** Destructor for a userdata type (`lua_Destructor`). */
 typedef Lua_Destructor = cpp.Callable<(L:cpp.RawPointer<Lua_State>, userdata:cpp.RawPointer<cpp.Void>) -> Void>;
-/**
- * Direct-access callback for userdata field get/set operations.
- */
+
+/** Direct-access callback for getting or setting a userdata field. */
 typedef Lua_UserdataDirectAccess = cpp.Callable<(L:cpp.RawPointer<Lua_State>, data:cpp.RawPointer<cpp.Void>, atom:Int, cachedslot:cpp.RawPointer<cpp.UInt16>, utag:Int) -> Void>;
 
-/**
- * Direct-access callback for userdata namecall operations.
- */
+/** Direct-access callback for a userdata namecall. */
 typedef Lua_UserdataDirectNamecall = cpp.Callable<(L:cpp.RawPointer<Lua_State>, data:cpp.RawPointer<cpp.Void>, atom:Int, cachedslot:cpp.RawPointer<cpp.UInt16>, utag:Int) -> Int>;
 
-/**
- * Direct per-field getter callback for userdata.
- */
+/** Direct per-field getter for userdata. */
 typedef Lua_UserdataDirectFieldGet = cpp.Callable<(ud:cpp.RawPointer<cpp.Void>, result:cpp.RawPointer<cpp.Void>) -> Void>;
 
-/**
- * Counter function callback for native code execution profiling.
- */
+/** Per-function callback for native execution profiling. */
 typedef Lua_CounterFunction = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, functionName:cpp.ConstCharStar, linedefined:Int) -> Void>;
 
-/**
- * Counter value callback for native code execution profiling.
- */
+/** Per-counter callback for native execution profiling. */
 typedef Lua_CounterValue = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, kind:Int, line:Int, hits:cpp.UInt64) -> Void>;
 
-/**
- * Coverage callback for code coverage tracking.
- */
+/** Per-function callback for code-coverage reporting. */
 typedef Lua_Coverage = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, functionName:cpp.ConstCharStar, linedefined:Int, depth:Int, hits:cpp.RawConstPointer<Int>, size:cpp.SizeT) -> Void>;
 
-/**
- * Buffer for building Lua strings.
- */
+/** Working buffer for building Lua strings (`luaL_Buffer`). */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
 @:include('lualib.h')
@@ -277,44 +181,31 @@ typedef Lua_Coverage = cpp.Callable<(context:cpp.RawPointer<cpp.Void>, functionN
 @:native('luaL_Buffer')
 extern class LuaL_Buffer
 {
-	/**
-	 * Allocates a new LuaL_Buffer instance.
-	 */
+	/** Allocates a new instance. */
 	function new():Void;
 
-	/**
-	 * Current position in the buffer.
-	 */
+	/** Current write position. */
 	var p:cpp.CastCharStar;
 
-	/**
-	 * End pointer of the current writable buffer segment.
-	 */
+	/** End of the current writable segment. */
 	var end:cpp.CastCharStar;
 
-	/**
-	 * Lua state.
-	 */
+	/** Owning Lua state. */
 	var L:cpp.RawPointer<Lua_State>;
 
-	/**
-	 * Internal mutable string storage (opaque).
-	 */
+	/** Internal mutable string storage (opaque). */
 	var storage:cpp.RawPointer<cpp.Void>;
 
-	/**
-	 * Fixed inline buffer storage (first byte).
-	 */
+	/** First byte of the inline buffer storage. */
 	var buffer:cpp.Char;
 }
 
 /**
- * Callbacks struct used to reconfigure VM behavior dynamically.
- * Shared between all coroutines. Use Lua.callbacks(L) to obtain.
+ * VM behavior callbacks (`lua_Callbacks`), shared by all coroutines.
+ * Obtain with `Lua.callbacks(L)`.
  *
- * NOTE: Setting C function pointer fields directly from Haxe is not
- * supported due to ABI differences. Use hxluau utilities instead
- * (e.g. Luau.enableAutoCompile for the interrupt hook).
+ * Note that C function-pointer fields cannot be set from Haxe due to ABI
+ * differences. Use hxluau helpers instead, such as `Luau.enableAutoCompile`.
  */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
@@ -323,15 +214,11 @@ extern class LuaL_Buffer
 @:native('lua_Callbacks')
 extern class Lua_Callbacks
 {
-	/**
-	 * Arbitrary userdata pointer that is never overwritten by Luau.
-	 */
+	/** User pointer that Luau never overwrites. */
 	var userdata:cpp.RawPointer<cpp.Void>;
 }
 
-/**
- * Structure for Lua library functions.
- */
+/** One name and function entry for registering a library (`luaL_Reg`). */
 @:buildXml('<include name="${haxelib:hxluau}/project/Build.xml" />')
 @:include('lua.h')
 @:include('lualib.h')
@@ -340,18 +227,12 @@ extern class Lua_Callbacks
 @:native('luaL_Reg')
 extern class LuaL_Reg
 {
-	/**
-	 * Allocates a new LuaL_Reg instance.
-	 */
+	/** Allocates a new instance. */
 	function new():Void;
 
-	/**
-	 * Name of the function.
-	 */
+	/** Function name. */
 	var name:cpp.ConstCharStar;
 
-	/**
-	 * Function registered with Lua.
-	 */
+	/** The function. */
 	var func:Lua_CFunction;
 }
