@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   libffi 3.4.6 - Copyright (c) 2011, 2014, 2019, 2021, 2022, 2024, 2025
+   libffi 3.5.2 - Copyright (c) 2011, 2014, 2019, 2021, 2022, 2024, 2025
                     Anthony Green
                   - Copyright (c) 1996-2003, 2007, 2008 Red Hat, Inc.
 
@@ -255,8 +255,8 @@ void ffi_java_raw_to_ptrarray (ffi_cif *cif, ffi_java_raw *raw, void **args) __a
 FFI_API
 size_t ffi_java_raw_size (ffi_cif *cif) __attribute__((deprecated));
 
-#define FFI_VERSION_STRING "3.4.6"
-#define FFI_VERSION_NUMBER 30406
+#define FFI_VERSION_STRING "3.5.2"
+#define FFI_VERSION_NUMBER 30502
 
 #ifndef LIBFFI_ASM
 FFI_API const char *ffi_get_version (void);
