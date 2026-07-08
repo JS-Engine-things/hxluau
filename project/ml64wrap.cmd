@@ -37,11 +37,11 @@ if "!file!"=="" (
 if /i "!asm!"=="armasm64.exe" (
     rem Only pass what armasm64 needs: input and output paths
     set "cmd=-nologo"
-    if not "!fo!"=="" set "cmd=!cmd! -o !fo!"
-    set "cmd=!cmd! !file!"
+    if defined fo set "cmd=!cmd! -o "!fo!""
+    set "cmd=!cmd! "!file!""
 ) else (
     set "cmd=/c /nologo"
-    if not "!fo!"=="" set "cmd=!cmd! /Fo!fo!"
+    if defined fo set "cmd=!cmd! /Fo"!fo!""
     set "cmd=!cmd! !rest!"
 )
 
