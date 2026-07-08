@@ -10,6 +10,7 @@ import hxluau.Types;
 @:include('lua.h')
 @:include('luacode.h')
 @:include('luacodegen.h')
+@:include('luajitinliner.h')
 @:unreflective
 extern class LuauVM
 {
@@ -113,4 +114,18 @@ extern class LuauVM
 	 */
 	@:native('luau_set_compile_constant_string')
 	static function compileConstantString(constant:cpp.RawPointer<cpp.Void>, s:cpp.ConstCharStar, l:cpp.SizeT):Void;
+
+	/**
+	 * Enables the JIT inliner for the given state.
+	 * @param L Lua state.
+	 */
+	@:native('luau_enable_jit_inliner')
+	static function enable_jit_inliner(L:cpp.RawPointer<Lua_State>):Void;
+
+	/**
+	 * Disables the JIT inliner for the given state.
+	 * @param L Lua state.
+	 */
+	@:native('luau_disable_jit_inliner')
+	static function disable_jit_inliner(L:cpp.RawPointer<Lua_State>):Void;
 }

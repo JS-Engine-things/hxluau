@@ -10,3 +10,4 @@
 	path = project/lib/libffi
 	url = https://github.com/libffi/libffi.git
 	depth = 1
+	branch = master

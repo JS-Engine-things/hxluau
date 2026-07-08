@@ -31,6 +31,7 @@
 		<!-- we copy Ast, Bytecode, Compiler, CodeGen, Common and VM includes to custom due to Luau source being messy -->
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/custom/luau/include" />
 		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/VM/src" />
+		<compilerflag value="-I${haxelib:hxluau}/project/lib/luau/Inliner/src" />
 
 		<!--<compilerflag value="-D_CRT_SECURE_NO_WARNINGS" if="windows" unless="mingw" />-->
 		<compilerflag value="-fno-math-errno" unless="windows" />
@@ -143,6 +144,10 @@
 		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/SharedCodeAllocator.cpp" />
 		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/UnwindBuilderDwarf2.cpp" />
 		<file name="${haxelib:hxluau}/project/lib/luau/CodeGen/src/UnwindBuilderWin.cpp" />
+
+		<!-- Luau.Inliner -->
+		<file name="${haxelib:hxluau}/project/lib/luau/Inliner/src/JitInliner.cpp" />
+		<file name="${haxelib:hxluau}/project/lib/luau/Inliner/src/luajitinliner.cpp" />
 	</files>
 
 	<files id="luau-cffi">
