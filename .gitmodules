@@ -1,7 +1,8 @@
 [submodule "project/lib/luau"]
 	path = project/lib/luau
-	url = https://github.com/luau-lang/luau
+	url = https://github.com/moxie-coder/luau
 	depth = 1
+	branch = hxluau
 [submodule "project/lib/cffi"]
 	path = project/lib/cffi
 	url = https://github.com/ShadowEngineTeam/cffi-luau
